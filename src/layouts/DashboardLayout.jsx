@@ -1,6 +1,6 @@
+import { Outlet } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
-import LoginPage from "../pages/LoginPage";
 
 const DashboardLayout = () => {
   return (
@@ -8,7 +8,9 @@ const DashboardLayout = () => {
       <Sidebar />
       <div className="flex-1">
         <Navbar />
-        <LoginPage />
+        <div className="p-4">
+          <Outlet />
+        </div>
       </div>
     </div>
   );
