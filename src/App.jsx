@@ -7,6 +7,8 @@ import {
 import LoginPage from "./pages/LoginPage";
 import DashboardLayout from "./layouts/DashboardLayout";
 import CreateJobPages from "./pages/CreateJobPage";
+import { AuthProvider } from "./context/AuthContext";
+import { UserProvider } from "./context/UserContext";
 
 const App = () => {
   const router = createBrowserRouter(
@@ -25,9 +27,11 @@ const App = () => {
   );
 
   return (
-    <>
-      <RouterProvider router={router} />
-    </>
+    <AuthProvider>
+      <UserProvider>
+        <RouterProvider router={router} />
+      </UserProvider>
+    </AuthProvider>
   );
 };
 

@@ -1,55 +1,141 @@
 import { DevTool } from "@hookform/devtools";
-import { useFieldArray, useForm } from "react-hook-form";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { useFieldArray, useForm, Controller, set } from "react-hook-form";
+import {
+  fetchCompany,
+  postCreateCompany,
+  postJob,
+} from "../utils/api/companyApi";
+import Select from "react-select";
 
 const CreateJobPages = () => {
+  const [image, setImage] = useState();
+  const [company, setCompany] = useState();
+  const [selectedCompany, setSelectedCompany] = useState();
+
   const jobForm = useForm({
     defaultValues: {
-      companyId: "",
       posisi: "",
       daerahPerusahaan: "",
       kualifikasi: [""],
     },
   });
 
+  const companyForm = useForm({
+    defaultValues: {
+      namaPerusahaan: "",
+    },
+  });
+
+  const getCompany = async () => {
+    const { data } = await fetchCompany();
+    const result = data.map((data) => {
+      return {
+        label: data.namaPerusahaan,
+        value: data.companyId,
+      };
+    });
+    setCompany(result);
+  };
+
+  useEffect(() => {
+    getCompany();
+  }, []);
+
   const {
     register: jobFormRegister,
     control,
     handleSubmit: jobFormSubmit,
-    formState,
+    reset: jobFormReset,
+    setValue: jobFormSetValue,
   } = jobForm;
+
+  const {
+    register: companyFormRegister,
+    handleSubmit: companyFormSubmit,
+    setValue: companyFormSetValue,
+    reset: companyFormReset,
+  } = companyForm;
 
   const { fields, append, remove } = useFieldArray({
     name: "kualifikasi",
     control,
   });
 
-  const handleJobListSubmit = (data) => {
-    console.log(data);
+  const uploadImage = () => {
+    const formData = new FormData();
+    formData.append("file", image);
+    formData.append("upload_preset", "uemrpa6m");
+
+    if (image) {
+      axios
+        .post(
+          "https://api.cloudinary.com/v1_1/del1943mz/image/upload",
+          formData
+        )
+        .then((res) => {
+          companyFormSetValue("companyImgUrl", res.data.secure_url);
+        });
+    }
+  };
+
+  const handleJobListSubmit = async (data) => {
+    await postJob(data);
+    jobFormReset();
+  };
+
+  const handleCompanySubmit = async (data) => {
+    uploadImage();
+    await postCreateCompany(data);
+    companyFormReset();
+  };
+
+  const handleCompanyChange = (e) => {
+    setSelectedCompany(e.value);
+    jobFormSetValue("companyId", e.value);
   };
 
   return (
     <div className="border-2 border-black">
       <div className="p-4">
-        <form>
+        <form noValidate onSubmit={companyFormSubmit(handleCompanySubmit)}>
           <h3>Create Company</h3>
           <input
             placeholder="Nama perusahaan"
             className="border-b-black border-b-[1px]"
+            {...companyFormRegister("namaPerusahaan", { required: true })}
           />
-          {/* TODO: Create file type input for company image */}
 
-          <button className="border-2 border-black">Create Company</button>
+          <input type="file" onChange={(e) => setImage(e.target.files[0])} />
+
+          <button
+            className="border-2 border-black"
+            onSubmit={companyFormSubmit(handleCompanySubmit)}
+          >
+            Create Company
+          </button>
         </form>
       </div>
       <div>
         <form noValidate onSubmit={jobFormSubmit(handleJobListSubmit)}>
           <h3>Create Job List</h3>
           <p>Please select company</p>
-          {/* TODO: Create select component using react solect */}
-          <select placeholder="company" {...jobFormRegister("companyId")}>
-            <option value={"kontol"}>Test</option>
-            <option value={"kontol2"}>Test2</option>
-          </select>
+          <Controller
+            name="companyId"
+            control={control}
+            render={({ field }) => (
+              <Select
+                {...field}
+                options={company}
+                value={company?.filter(function(option) {
+                  return option.value === selectedCompany;
+                })}
+                onChange={handleCompanyChange}
+              />
+            )}
+          />
+
           <input placeholder="posisi" {...jobFormRegister("posisi")} />
           <input
             placeholder="daerah"

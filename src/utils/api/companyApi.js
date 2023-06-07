@@ -1,20 +1,25 @@
 import axios from "axios";
-import useSWR from "swr";
 
-const fetchCompany = () => {
+export const fetchCompany = () => {
   return axios.get("https://jobii.id:6969/getCompany", {
     headers: {
-      Authorization: `${window.sessionStorage.getItem("token")}`,
+      Authorization: `Bearer ${window.sessionStorage.getItem("token")}`,
     },
   });
 };
 
-export const getCompany = () => {
-  const { data, error, isLoading } = useSWR(`/api/company`, fetchCompany);
+export const postCreateCompany = async (data) => {
+  return await axios.post("https://jobii.id:6969/createCompany", data, {
+    headers: {
+      Authorization: `Bearer ${window.sessionStorage.getItem("token")}`,
+    },
+  });
+};
 
-  return {
-    user: data,
-    isLoading,
-    isError: error,
-  };
+export const postJob = async (data) => {
+  return await axios.post("https://jobii.id:6969/addLowongan", data, {
+    headers: {
+      Authorization: `Bearer ${window.sessionStorage.getItem("token")}`,
+    },
+  });
 };
