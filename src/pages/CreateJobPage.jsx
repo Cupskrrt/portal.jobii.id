@@ -1,7 +1,7 @@
 import { DevTool } from "@hookform/devtools";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useFieldArray, useForm, Controller, set } from "react-hook-form";
+import { useFieldArray, useForm, Controller } from "react-hook-form";
 import {
   fetchCompany,
   postCreateCompany,
@@ -75,7 +75,7 @@ const CreateJobPages = () => {
           formData
         )
         .then((res) => {
-          companyFormSetValue("companyImgUrl", res.data.secure_url);
+          companyFormSetValue("companyImageUrl", res.data.secure_url);
         });
     }
   };
@@ -88,6 +88,7 @@ const CreateJobPages = () => {
   const handleCompanySubmit = async (data) => {
     uploadImage();
     await postCreateCompany(data);
+    console.log(data);
     companyFormReset();
   };
 
@@ -98,29 +99,36 @@ const CreateJobPages = () => {
 
   return (
     <div className="border-2 border-black">
-      <div className="p-4">
-        <form noValidate onSubmit={companyFormSubmit(handleCompanySubmit)}>
+      <div className="p-4 m-4 border-black border-[1px]">
+        <form
+          noValidate
+          onSubmit={companyFormSubmit(handleCompanySubmit)}
+          className="flex flex-col gap-5 w-fit"
+        >
           <h3>Create Company</h3>
           <input
             placeholder="Nama perusahaan"
             className="border-b-black border-b-[1px]"
             {...companyFormRegister("namaPerusahaan", { required: true })}
           />
-
+          <p>Mohon untuk menunggu sampai nama filenya muncul</p>
           <input type="file" onChange={(e) => setImage(e.target.files[0])} />
 
           <button
-            className="border-2 border-black"
+            className="border-2 border-black active:bg-gray-500"
             onSubmit={companyFormSubmit(handleCompanySubmit)}
           >
             Create Company
           </button>
         </form>
       </div>
-      <div>
-        <form noValidate onSubmit={jobFormSubmit(handleJobListSubmit)}>
+      <div className="p-4 m-4 border-black border-[1px]">
+        <form
+          noValidate
+          onSubmit={jobFormSubmit(handleJobListSubmit)}
+          className="flex flex-col gap-5 w-fit"
+        >
           <h3>Create Job List</h3>
-          <p>Please select company</p>
           <Controller
             name="companyId"
             control={control}
@@ -128,18 +136,24 @@ const CreateJobPages = () => {
               <Select
                 {...field}
                 options={company}
-                value={company?.filter(function(option) {
+                value={company?.filter(function (option) {
                   return option.value === selectedCompany;
                 })}
                 onChange={handleCompanyChange}
+                placeholder="Pilih perusahaan"
               />
             )}
           />
 
-          <input placeholder="posisi" {...jobFormRegister("posisi")} />
+          <input
+            placeholder="posisi"
+            {...jobFormRegister("posisi")}
+            className="border-black border-b-[1px]"
+          />
           <input
             placeholder="daerah"
             {...jobFormRegister("daerahPerusahaan")}
+            className="border-black border-b-[1px]"
           />
           {fields.map((field, index) => {
             return (
@@ -148,6 +162,7 @@ const CreateJobPages = () => {
                   type="text"
                   {...jobFormRegister(`kualifikasi.${index}`)}
                   placeholder="kualifikasi"
+                  className="border-black border-b-[1px]"
                 />
 
                 {index > 0 && (
@@ -156,12 +171,17 @@ const CreateJobPages = () => {
               </div>
             );
           })}
-          <button type="button" onClick={() => append("")}>
+          <button
+            type="button"
+            onClick={() => append("")}
+            className="border-black active:bg-gray-500 border-[1px]"
+          >
             add kualifikasi
           </button>
           <button
             type="submit"
             onClick={() => jobFormSubmit(handleJobListSubmit)}
+            className="border-black active:bg-gray-500 border-[1px]"
           >
             List Job
           </button>

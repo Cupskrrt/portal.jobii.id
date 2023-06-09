@@ -9,6 +9,8 @@ import DashboardLayout from "./layouts/DashboardLayout";
 import CreateJobPages from "./pages/CreateJobPage";
 import { AuthProvider } from "./context/AuthContext";
 import { UserProvider } from "./context/UserContext";
+import ViewApplicantPage from "./pages/ViewApplicantPage";
+import RequireAuth from "./utils/RequireAuth";
 
 const App = () => {
   const router = createBrowserRouter(
@@ -18,9 +20,22 @@ const App = () => {
 
         {/* DASHBOARD ROUTE */}
         <Route path="dashboard" element={<DashboardLayout />}>
-          <Route path="create-job" element={<CreateJobPages />} />
-          <Route path="applicant" />
-          <Route path="applicant/:applicantId" />
+          <Route
+            path="create-job"
+            element={
+              <RequireAuth>
+                <CreateJobPages />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="applicant"
+            element={
+              <RequireAuth>
+                <ViewApplicantPage />
+              </RequireAuth>
+            }
+          />
         </Route>
       </Route>
     )

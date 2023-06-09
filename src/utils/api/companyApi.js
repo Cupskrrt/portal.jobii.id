@@ -23,3 +23,19 @@ export const postJob = async (data) => {
     },
   });
 };
+
+export const getAllApplicant = async () => {
+  return await axios.get("https://jobii.id:6969/getAllApplicant", {
+    headers: {
+      Authorization: `Bearer ${window.sessionStorage.getItem("token")}`,
+    },
+  });
+};
+
+export const getApplicantById = async (id) => {
+  return await axios.get(`https://jobii.id:6969/getForm/${id}`, {
+    headers: {
+      Authorization: `Bearer ${window.sessionStorage.getItem("token")}`,
+    },
+  });
+};
