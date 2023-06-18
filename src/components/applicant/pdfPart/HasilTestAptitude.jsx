@@ -137,20 +137,20 @@ const HasilTestAptitude = ({ selectedApplicant }) => {
         >
           <Text>Range IQ</Text>
           <Text>{stringPercentage}</Text>
-          {intPercentage <= 50 ? (
+          {intPercentage <= 40 ? (
             <Text>Kecerdasan sudah pasti lemah</Text>
-          ) : intPercentage > 50 && intPercentage <= 60 ? (
+          ) : intPercentage > 40 && intPercentage <= 50 ? (
             <Text>kecerdasan diambang kekurangan</Text>
-          ) : intPercentage > 60 && intPercentage <= 70 ? (
+          ) : intPercentage > 50 && intPercentage <= 60 ? (
             <Text>Kecerdasan dibawah rata-rata</Text>
-          ) : intPercentage > 70 && intPercentage <= 80 ? (
+          ) : intPercentage > 60 && intPercentage <= 70 ? (
             <Text>Kecerdasan normal atau rata-rata</Text>
-          ) : intPercentage > 80 && intPercentage <= 90 ? (
+          ) : intPercentage > 70 && intPercentage <= 80 ? (
             <Text>Kecerdasan superior</Text>
-          ) : intPercentage > 90 ? (
+          ) : intPercentage > 80 && intPercentage <= 90 ? (
             <Text>Kecerdasan sangat superior</Text>
           ) : (
-            <Text>-</Text>
+            <Text>Genius atau mendekati genius</Text>
           )}
         </View>
       </View>

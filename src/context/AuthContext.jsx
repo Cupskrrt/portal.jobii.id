@@ -8,6 +8,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (credential) => {
     const { data } = await loginApi(credential);
     window.sessionStorage.setItem("token", data.token);
+    console.log(data);
     setAuthenticated(true);
   };
 
@@ -17,7 +18,9 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ login, logout, authenticated }}>
+    <AuthContext.Provider
+      value={{ login, logout, authenticated, setAuthenticated }}
+    >
       {children}
     </AuthContext.Provider>
   );

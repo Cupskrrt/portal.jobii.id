@@ -4,6 +4,7 @@ import {
   createBrowserRouter,
   createRoutesFromElements,
 } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import LoginPage from "./pages/LoginPage";
 import DashboardLayout from "./layouts/DashboardLayout";
 import CreateJobPages from "./pages/CreateJobPage";
@@ -11,6 +12,9 @@ import { AuthProvider } from "./context/AuthContext";
 import { UserProvider } from "./context/UserContext";
 import ViewApplicantPage from "./pages/ViewApplicantPage";
 import RequireAuth from "./utils/RequireAuth";
+import ProjectPage from "./pages/ProjectPage";
+
+const queryClient = new QueryClient();
 
 const App = () => {
   const router = createBrowserRouter(
@@ -36,6 +40,14 @@ const App = () => {
               </RequireAuth>
             }
           />
+          <Route
+            path="project"
+            element={
+              <RequireAuth>
+                <ProjectPage />
+              </RequireAuth>
+            }
+          />
         </Route>
       </Route>
     )
@@ -44,7 +56,9 @@ const App = () => {
   return (
     <AuthProvider>
       <UserProvider>
-        <RouterProvider router={router} />
+        <QueryClientProvider client={queryClient}>
+          <RouterProvider router={router} />
+        </QueryClientProvider>
       </UserProvider>
     </AuthProvider>
   );

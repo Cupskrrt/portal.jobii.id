@@ -12,6 +12,17 @@ const Sidebar = () => {
       <ul className="space-y-2">
         <li>
           <NavLink
+            to={"project"}
+            className={({ isActive, isPending }) =>
+              isPending ? "text-white" : isActive ? "text-red-800" : ""
+            }
+          >
+            Projects
+          </NavLink>
+        </li>
+
+        <li>
+          <NavLink
             to={"create-job"}
             className={({ isActive, isPending }) =>
               isPending ? "text-white" : isActive ? "text-red-800" : ""
