@@ -5,6 +5,7 @@ import {
   deleteProject,
   createNewProjectItem,
   deleteProjectItem,
+  updateProjectItem,
 } from "../utils/api/projectApi";
 
 export const useGetProjectQuery = (onSuccess, onError) => {
@@ -30,6 +31,19 @@ export const useCreateProjectItemQuery = () => {
       queryClient.invalidateQueries(["project"]);
     },
   });
+};
+
+export const useUpdateProjectItemQuery = () => {
+  const queryClient = useQueryClient();
+  try {
+    return useMutation(updateProjectItem, {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["project"]);
+      },
+    });
+  } catch (err) {
+    console.log({ msg: err.message });
+  }
 };
 
 export const useDeleteProjectItemQuery = () => {

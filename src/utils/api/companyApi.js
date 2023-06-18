@@ -1,11 +1,7 @@
 import axios from "axios";
 
 export const fetchCompany = () => {
-  return axios.get("https://jobii.id:6969/getCompany", {
-    headers: {
-      Authorization: `Bearer ${window.sessionStorage.getItem("token")}`,
-    },
-  });
+  return axios.get("https://jobii.id:6969/getCompany");
 };
 
 export const postCreateCompany = async (data) => {

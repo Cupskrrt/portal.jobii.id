@@ -31,7 +31,7 @@ const ProjectPage = () => {
             onClick={newProjectHandler}
             className="py-2 px-4 text-white bg-blue-500 rounded-lg active:bg-blue-700"
           >
-            New
+            {addProject ? "Cancel" : "New"}
           </button>
         </div>
         {data?.data?.map((project) => {
