@@ -1,7 +1,9 @@
 import { NavLink } from "react-router-dom";
 import logo from "../assets/logo.png";
+import { useUser } from "../context/UserContext";
 
 const Sidebar = () => {
+  const { profile } = useUser();
   return (
     <nav className="gap-4 p-4 space-y-4 w-40 text-white bg-gray-400">
       {/* LOGO */}
@@ -20,27 +22,30 @@ const Sidebar = () => {
             Projects
           </NavLink>
         </li>
-
-        <li>
-          <NavLink
-            to={"create-job"}
-            className={({ isActive, isPending }) =>
-              isPending ? "text-white" : isActive ? "text-red-800" : ""
-            }
-          >
-            Create Job
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            to={"applicant"}
-            className={({ isActive, isPending }) =>
-              isPending ? "text-white" : isActive ? "text-red-800" : ""
-            }
-          >
-            View Applicant
-          </NavLink>
-        </li>
+        {profile?.email === "achmad.samsul@jobii.id" && (
+          <>
+            <li>
+              <NavLink
+                to={"create-job"}
+                className={({ isActive, isPending }) =>
+                  isPending ? "text-white" : isActive ? "text-red-800" : ""
+                }
+              >
+                Create Job
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to={"applicant"}
+                className={({ isActive, isPending }) =>
+                  isPending ? "text-white" : isActive ? "text-red-800" : ""
+                }
+              >
+                View Applicant
+              </NavLink>
+            </li>
+          </>
+        )}
       </ul>
     </nav>
   );

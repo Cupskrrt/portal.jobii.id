@@ -23,7 +23,14 @@ const App = () => {
         <Route index element={<LoginPage />} />
 
         {/* DASHBOARD ROUTE */}
-        <Route path="dashboard" element={<DashboardLayout />}>
+        <Route
+          path="dashboard"
+          element={
+            <RequireAuth>
+              <DashboardLayout />
+            </RequireAuth>
+          }
+        >
           <Route
             path="create-job"
             element={
