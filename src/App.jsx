@@ -4,17 +4,15 @@ import {
   createBrowserRouter,
   createRoutesFromElements,
 } from "react-router-dom";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import LoginPage from "./pages/LoginPage";
 import DashboardLayout from "./layouts/DashboardLayout";
 import CreateJobPages from "./pages/CreateJobPage";
-import { AuthProvider } from "./context/AuthContext";
-import { UserProvider } from "./context/UserContext";
 import ViewApplicantPage from "./pages/ViewApplicantPage";
 import RequireAuth from "./utils/RequireAuth";
+import ProjectLayout from "./layouts/ProjectLayout";
 import ProjectPage from "./pages/ProjectPage";
-
-const queryClient = new QueryClient();
+import store from "./redux/store";
+import { Provider } from "react-redux";
 
 const App = () => {
   const router = createBrowserRouter(
@@ -23,14 +21,8 @@ const App = () => {
         <Route index element={<LoginPage />} />
 
         {/* DASHBOARD ROUTE */}
-        <Route
-          path="dashboard"
-          element={
-            <RequireAuth>
-              <DashboardLayout />
-            </RequireAuth>
-          }
-        >
+        <Route path="dashboard" element={<DashboardLayout />}>
+          <Route path="home" />
           <Route
             path="create-job"
             element={
@@ -47,27 +39,18 @@ const App = () => {
               </RequireAuth>
             }
           />
-          <Route
-            path="project"
-            element={
-              <RequireAuth>
-                <ProjectPage />
-              </RequireAuth>
-            }
-          />
+          <Route path="project" element={<ProjectLayout />}>
+            <Route path=":projectId" element={<ProjectPage />} />
+          </Route>
         </Route>
       </Route>
     )
   );
 
   return (
-    <AuthProvider>
-      <UserProvider>
-        <QueryClientProvider client={queryClient}>
-          <RouterProvider router={router} />
-        </QueryClientProvider>
-      </UserProvider>
-    </AuthProvider>
+    <Provider store={store}>
+      <RouterProvider router={router} />
+    </Provider>
   );
 };
 

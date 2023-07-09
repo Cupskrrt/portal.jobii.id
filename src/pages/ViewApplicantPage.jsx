@@ -1,30 +1,10 @@
 import { useState, useEffect } from "react";
-import { getAllApplicant, getApplicantById } from "../utils/api/companyApi";
 import ApplicantPdf from "../components/applicant/ApplicantPdf";
 import { PDFViewer } from "@react-pdf/renderer";
 
 const ViewApplicantPage = () => {
   const [applicant, setApplicant] = useState();
   const [selectedApplicant, setSelectedApplicant] = useState();
-
-  const getApplicant = async () => {
-    const { data } = await getAllApplicant();
-    setApplicant(data);
-  };
-
-  useEffect(() => {
-    getApplicant();
-    const interval = setInterval(() => {
-      getApplicant();
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  const getSelectedApplicant = async (id) => {
-    const { data } = await getApplicantById(id);
-    setSelectedApplicant(data);
-  };
 
   return (
     <div className="flex flex-row gap-5">
