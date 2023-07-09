@@ -1,24 +1,21 @@
 import { useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
-import { useUser } from "../context/UserContext";
+import { login } from "../redux/auth.slice";
 
 const LoginPage = () => {
-  const { login } = useAuth();
-  const { getProfile } = useUser();
+  const dispatch = useDispatch();
   const loginForm = useForm();
-
   const navigate = useNavigate();
 
   const { register, control, handleSubmit } = loginForm;
 
   const handleLogin = async (data) => {
     try {
-      await login(data);
+      dispatch(login());
       navigate("/dashboard");
-      await getProfile();
     } catch (err) {
-      console.log(err);
+      alert(err?.response?.data?.msg);
     }
   };
 
