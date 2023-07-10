@@ -16,11 +16,26 @@ export const projectSlice = createApi({
       query: (projectId) => `project/${projectId}`,
       providesTags: () => [{ type: "Project" }],
     }),
+    addProjectTask: builder.mutation({
+      query: ({ projectId, data }) => ({
+        url: `project/${projectId}/task`,
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["Project"],
+    }),
     updateProjectTask: builder.mutation({
       query: (task) => ({
         url: `project/task/${task.id}`,
         method: "PATCH",
         body: task,
+      }),
+      invalidatesTags: ["Project"],
+    }),
+    deleteProjectTask: builder.mutation({
+      query: (id) => ({
+        url: `project/task/${id}`,
+        method: "DELETE",
       }),
       invalidatesTags: ["Project"],
     }),
@@ -30,5 +45,7 @@ export const projectSlice = createApi({
 export const {
   useGetProjectQuery,
   useGetProjectDetailQuery,
+  useAddProjectTaskMutation,
   useUpdateProjectTaskMutation,
+  useDeleteProjectTaskMutation,
 } = projectSlice;
