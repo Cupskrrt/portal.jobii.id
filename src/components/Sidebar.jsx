@@ -41,6 +41,14 @@ const Sidebar = () => {
               View Applicant
             </NavLink>
           </li>
+          <li>
+            <NavLink
+            to= {"Storage"}
+            className={({ isActive, isPending }) =>
+                isPending ? "text-white" : isActive ? "text-red-800" : ""}>
+              Storage
+            </NavLink>
+          </li>
         </>
       </ul>
     </nav>

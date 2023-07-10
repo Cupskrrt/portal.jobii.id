@@ -12,6 +12,7 @@ import RequireAuth from "./utils/RequireAuth";
 import ProjectLayout from "./layouts/ProjectLayout";
 import ProjectPage from "./pages/ProjectPage";
 import store from "./redux/store";
+import StoragePage from "./pages/StoragePage";
 import { Provider } from "react-redux";
 
 const App = () => {
@@ -42,6 +43,11 @@ const App = () => {
           <Route path="project" element={<ProjectLayout />}>
             <Route path=":projectId" element={<ProjectPage />} />
           </Route>
+          <Route 
+            path="Storage"
+            element={
+              <StoragePage/>
+            }/>
         </Route>
       </Route>
     )
