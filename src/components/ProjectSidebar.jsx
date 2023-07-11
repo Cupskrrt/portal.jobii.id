@@ -1,9 +1,9 @@
-import { HiChevronDown } from "react-icons/hi";
 import { Link } from "react-router-dom";
-import { useGetProjectQuery } from "../redux/project.slice";
+import { HiChevronDown } from "react-icons/hi";
+import { useGetProjectQuery } from "../query/project/project.query";
 
 const ProjectSidebar = () => {
-  const { data } = useGetProjectQuery();
+  const { data: project } = useGetProjectQuery();
 
   return (
     <div className="py-4 px-6 border-r-[1px] border-r-gray-200">
@@ -14,7 +14,7 @@ const ProjectSidebar = () => {
             Project
           </div>
           <ul>
-            {data?.map((project) => (
+            {project?.data?.map((project) => (
               <li key={project.id}>
                 {project.status === "ACTIVE" && (
                   <Link to={`${project.id}`}>{project.name}</Link>
@@ -29,7 +29,7 @@ const ProjectSidebar = () => {
             Archived
           </div>
           <ul>
-            {data?.map((project) => (
+            {project?.data?.map((project) => (
               <li key={project.id}>
                 {project.status === "ARCHIVED" && (
                   <Link to={`${project.id}`}>{project.name}</Link>

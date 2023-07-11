@@ -1,12 +1,10 @@
 import { NavLink, useParams } from "react-router-dom";
 import { HiDotsVertical, HiX, HiTrash, HiArchive } from "react-icons/hi";
-import { useGetProjectDetailQuery } from "../redux/project.slice";
 import { useState } from "react";
+import { useGetProjectDetailQuery } from "../query/project/project.query";
 
-const ProjectNavbar = () => {
+const ProjectNavbar = ({ projectName }) => {
   const [popup, setPopup] = useState(false);
-  const { projectId } = useParams();
-  const { data } = useGetProjectDetailQuery(projectId);
 
   const buttonHandler = () => {
     setPopup(!popup);
@@ -16,7 +14,9 @@ const ProjectNavbar = () => {
   return (
     <div className="p-5 space-y-6 bg-white border-b-2 border-b-gray-200">
       <div className="flex justify-between">
-        <h2 className="text-2xl font-bold">{data?.name}</h2>
+        <h2 className="text-2xl font-bold">
+          {projectName ? projectName : "Select a project"}
+        </h2>
         <div className="flex flex-row-reverse gap-3 items-center">
           <button onClick={() => buttonHandler()}>
             {popup ? (
@@ -40,7 +40,7 @@ const ProjectNavbar = () => {
       <ul className="flex space-x-5">
         <li>
           <NavLink
-            to={""}
+            to={"task"}
             className={({ isActive, isPending }) =>
               isPending ? "text-white" : isActive ? "text-red-800" : ""
             }

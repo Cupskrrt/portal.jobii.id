@@ -9,21 +9,22 @@ import {
 import KanbanLane from "./KanbanLane";
 import {
   useGetProjectDetailQuery,
-  useUpdateProjectTaskMutation,
-} from "../redux/project.slice";
+  useUpdateTaskMutation,
+} from "../query/project/project.query";
 import { useParams } from "react-router-dom";
 
 const KanbanBoard = () => {
   const { projectId } = useParams();
-  const [updateTask, { isLoading }] = useUpdateProjectTaskMutation();
+  const { data: projectDetail } = useGetProjectDetailQuery(projectId);
+  const { mutate: updateTask } = useUpdateTaskMutation();
+
   const lanes = [
     { id: 1, status: "NOT_STARTED", title: "Not Started" },
     { id: 2, status: "ON_PROGRESS", title: "On Progress" },
     { id: 3, status: "DONE", title: "Done" },
   ];
 
-  const { data } = useGetProjectDetailQuery(projectId);
-  const tasks = data?.tasks;
+  const tasks = projectDetail?.data?.tasks;
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -36,11 +37,9 @@ const KanbanBoard = () => {
       try {
         const cardId = draggedTask.id;
         const laneStatus = over.data.current.status;
+        const task = { id: cardId, status: laneStatus, projectId };
 
-        await updateTask({
-          id: cardId,
-          status: laneStatus,
-        });
+        updateTask(task);
       } catch (error) {
         console.error(`Error updating card ${draggedTask.id} status:`, error);
       }

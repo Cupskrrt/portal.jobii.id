@@ -1,7 +1,6 @@
 import { HiDotsVertical, HiPencil, HiTrash, HiX } from "react-icons/hi";
 import { useDraggable } from "@dnd-kit/core";
 import { useState } from "react";
-import { useDeleteProjectTaskMutation } from "../redux/project.slice";
 
 const KanbanCard = ({ card }) => {
   const [popup, setPopup] = useState(false);
@@ -10,8 +9,6 @@ const KanbanCard = ({ card }) => {
     setPopup(!popup);
     // document.querySelector(`card-misc${card.id}`).classList.toggle("hidden");
   };
-
-  const [deleteTask, { isLoading }] = useDeleteProjectTaskMutation();
 
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: card.id,
@@ -27,7 +24,6 @@ const KanbanCard = ({ card }) => {
     : undefined;
 
   const deleteCardHandler = async (id) => {
-    await deleteTask(id);
     document.querySelector("#card-misc").classList.toggle("hidden");
   };
 

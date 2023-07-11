@@ -1,13 +1,10 @@
 import { DevTool } from "@hookform/devtools";
-import { Page } from "@react-pdf/renderer";
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
-import { useAddProjectTaskMutation } from "../redux/project.slice";
 
 const NewTaskCard = ({ popup, laneStatus }) => {
   const { projectId } = useParams();
   const taskForm = useForm({});
-  const [addTask, { isLoading }] = useAddProjectTaskMutation();
 
   const {
     register: taskFormRegister,
@@ -17,10 +14,6 @@ const NewTaskCard = ({ popup, laneStatus }) => {
 
   const handleAddNewTask = async (data) => {
     const payload = { ...data, status: laneStatus };
-    await addTask({
-      projectId,
-      data: payload,
-    });
     popup();
   };
   return (

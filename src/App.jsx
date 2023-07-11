@@ -11,9 +11,9 @@ import ViewApplicantPage from "./pages/ViewApplicantPage";
 import RequireAuth from "./utils/RequireAuth";
 import ProjectLayout from "./layouts/ProjectLayout";
 import ProjectPage from "./pages/ProjectPage";
-import store from "./redux/store";
 import StoragePage from "./pages/StoragePage";
-import { Provider } from "react-redux";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import KanbanBoard from "./components/KanbanBoard";
 
 const App = () => {
   const router = createBrowserRouter(
@@ -41,22 +41,22 @@ const App = () => {
             }
           />
           <Route path="project" element={<ProjectLayout />}>
-            <Route path=":projectId" element={<ProjectPage />} />
+            <Route path=":projectId" element={<ProjectPage />}>
+              <Route path="task" element={<KanbanBoard />} />
+            </Route>
           </Route>
-          <Route 
-            path="Storage"
-            element={
-              <StoragePage/>
-            }/>
+          <Route path="Storage" element={<StoragePage />} />
         </Route>
       </Route>
     )
   );
 
+  const queryClient = new QueryClient();
+
   return (
-    <Provider store={store}>
+    <QueryClientProvider client={queryClient}>
       <RouterProvider router={router} />
-    </Provider>
+    </QueryClientProvider>
   );
 };
 
