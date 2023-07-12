@@ -1,11 +1,11 @@
-import { useState } from "react";
 import KanbanCard from "./KanbanCard";
 import { useDroppable } from "@dnd-kit/core";
 import { HiPlus } from "react-icons/hi";
-import NewTaskCard from "./NewTaskCard";
+import { useCreateTaskMutation } from "../query/project/project.query";
+import { useParams } from "react-router-dom";
 
 const KanbanLane = ({ lane, cards }) => {
-  const [newTask, setNewTask] = useState(false);
+  const { projectId } = useParams();
   const { isOver, setNodeRef } = useDroppable({
     id: lane.id,
     data: {
@@ -13,13 +13,17 @@ const KanbanLane = ({ lane, cards }) => {
     },
   });
 
+  const { mutate: createTask } = useCreateTaskMutation();
+
   const style = {
     color: isOver ? "green" : undefined,
   };
 
-  const popupHandler = () => {
-    setNewTask(!newTask);
+  const createCard = (lane) => {
+    const data = { projectId, status: lane.status };
+    createTask(data);
   };
+
   return (
     <div
       className="flex relative flex-col gap-5 items-center max-h-[50rem]"
@@ -30,12 +34,11 @@ const KanbanLane = ({ lane, cards }) => {
         <h2 className="self-start">{lane.title}</h2>
         <button
           className="flex justify-center items-center p-2 w-96 text-center bg-white rounded-md border-black"
-          onClick={() => popupHandler()}
+          onClick={() => createCard(lane)}
         >
           <HiPlus />
         </button>
       </div>
-      {newTask && <NewTaskCard popup={popupHandler} laneStatus={lane.status} />}
       {cards
         ?.filter((card) => card.status === lane.status)
         .map((card, index) => (

@@ -9,14 +9,14 @@ import {
 import KanbanLane from "./KanbanLane";
 import {
   useGetProjectDetailQuery,
-  useUpdateTaskMutation,
+  useDragTaskMutation,
 } from "../query/project/project.query";
 import { useParams } from "react-router-dom";
 
 const KanbanBoard = () => {
   const { projectId } = useParams();
   const { data: projectDetail } = useGetProjectDetailQuery(projectId);
-  const { mutate: updateTask } = useUpdateTaskMutation();
+  const { mutate: dragTask } = useDragTaskMutation();
 
   const lanes = [
     { id: 1, status: "NOT_STARTED", title: "Not Started" },
@@ -39,7 +39,7 @@ const KanbanBoard = () => {
         const laneStatus = over.data.current.status;
         const task = { id: cardId, status: laneStatus, projectId };
 
-        updateTask(task);
+        dragTask(task);
       } catch (error) {
         console.error(`Error updating card ${draggedTask.id} status:`, error);
       }

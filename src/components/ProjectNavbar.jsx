@@ -1,15 +1,26 @@
-import { NavLink, useParams } from "react-router-dom";
+import { NavLink, useLocation, useNavigate, useParams } from "react-router-dom";
 import { HiDotsVertical, HiX, HiTrash, HiArchive } from "react-icons/hi";
 import { useState } from "react";
-import { useGetProjectDetailQuery } from "../query/project/project.query";
+import { useDeleteProjectMutation } from "../query/project/project.query";
 
 const ProjectNavbar = ({ projectName }) => {
+  const { projectId } = useParams();
   const [popup, setPopup] = useState(false);
 
   const buttonHandler = () => {
     setPopup(!popup);
-    document.querySelector("#project-navbar").classList.toggle("hidden");
   };
+
+  const navigate = useNavigate();
+
+  const { mutate: deleteProject } = useDeleteProjectMutation();
+
+  const deleteProjectHandler = () => {
+    deleteProject(projectId);
+    navigate("project");
+  };
+
+  // TODO: HANDLE BACK WHEN DELETING PROJECT AND MAKING OPTIMISTIC UPDATE
 
   return (
     <div className="p-5 space-y-6 bg-white border-b-2 border-b-gray-200">
@@ -25,15 +36,19 @@ const ProjectNavbar = ({ projectName }) => {
               <HiDotsVertical className="text-2xl" />
             )}
           </button>
-          <div className="hidden" id="project-navbar">
-            <ul className="flex space-x-3">
-              <li className="relative group">
-                <HiTrash className="text-2xl" title="Delete Project" />
-              </li>
-              <li>
-                <HiArchive className="text-2xl" />
-              </li>
-            </ul>
+          <div>
+            {popup && (
+              <ul className="flex space-x-3">
+                <li className="relative group">
+                  <button onClick={() => deleteProjectHandler()}>
+                    <HiTrash className="text-2xl" title="Delete Project" />
+                  </button>
+                </li>
+                <li>
+                  <HiArchive className="text-2xl" />
+                </li>
+              </ul>
+            )}
           </div>
         </div>
       </div>

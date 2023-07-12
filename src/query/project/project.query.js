@@ -1,5 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getProject, getProjectDetail, updateTask } from "./project.axios";
+import {
+  createProject,
+  createTask,
+  deleteProject,
+  deleteTask,
+  getProject,
+  getProjectDetail,
+  updateTask,
+} from "./project.axios";
 import { produce } from "immer";
 
 export const useGetProjectQuery = () => {
@@ -12,7 +20,38 @@ export const useGetProjectDetailQuery = (projectId) => {
   );
 };
 
-export const useUpdateTaskMutation = () => {
+export const useCreateProjectMutation = () => {
+  const queryclient = useQueryClient();
+  return useMutation(createProject, {
+    onSuccess: async (project) => {
+      await queryclient.cancelQueries(["Project"]);
+      const prevProject = queryclient.getQueryData(["Project"]);
+      queryclient.setQueryData(["Project"], project);
+
+      return { prevProject };
+    },
+  });
+};
+
+export const useCreateTaskMutation = () => {
+  const queryclient = useQueryClient();
+  return useMutation(createTask, {
+    onSuccess: () => {
+      queryclient.invalidateQueries(["ProjectDetail"]);
+    },
+  });
+};
+
+export const useDeleteProjectMutation = () => {
+  const queryclient = useQueryClient();
+  return useMutation(deleteProject, {
+    onSuccess: () => {
+      queryclient.invalidateQueries(["Project"]);
+    },
+  });
+};
+
+export const useDragTaskMutation = () => {
   const queryclient = useQueryClient();
   return useMutation(updateTask, {
     onMutate: async (task) => {
@@ -39,6 +78,28 @@ export const useUpdateTaskMutation = () => {
       queryclient.setQueryData(parent, context?.prevState);
     },
     onSettled: () => {
+      queryclient.invalidateQueries(["ProjectDetail"]);
+    },
+  });
+};
+
+export const useUpdateTaskMutation = () => {
+  const queryclient = useQueryClient();
+  try {
+    return useMutation(updateTask, {
+      onSuccess: () => {
+        queryclient.invalidateQueries(["ProjectDetail"]);
+      },
+    });
+  } catch (err) {
+    console.log({ msg: err.message });
+  }
+};
+
+export const useDeleteTaskMutation = () => {
+  const queryclient = useQueryClient();
+  return useMutation(deleteTask, {
+    onSuccess: () => {
       queryclient.invalidateQueries(["ProjectDetail"]);
     },
   });
