@@ -1,18 +1,29 @@
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { useLoginMutation } from "../redux/auth.slice";
+import { setUser, setToken, setAuth } from "../redux/user.slice";
+import { useDispatch } from "react-redux";
 
 const LoginPage = () => {
   const loginForm = useForm();
   const navigate = useNavigate();
+  const [loginMutation] = useLoginMutation();
+  const dispatch = useDispatch();
 
   const { register, handleSubmit } = loginForm;
 
   const handleLogin = async (data) => {
-    try {
-      navigate("/dashboard");
-    } catch (err) {
-      alert(err?.response?.data?.msg);
-    }
+    loginMutation(data)
+      .unwrap()
+      .then((loginData) => {
+        dispatch(setToken(loginData.token));
+        dispatch(setAuth());
+        navigate("/dashboard");
+      })
+      .catch((rejected) =>
+        // alert(rejected?.data?.msg ? rejected?.data?.msg : rejected?.data?.error)
+        alert(JSON.stringify(rejected))
+      );
   };
 
   return (

@@ -16,7 +16,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import ProjectLayout from "./layouts/ProjectLayout";
 import KanbanBoard from "./components/KanbanBoard";
 import { Provider } from "react-redux";
-import { store } from "./redux/store";
+import { persistor, store } from "./redux/store";
+import { PersistGate } from "redux-persist/integration/react";
 
 const App = () => {
   const router = createBrowserRouter(
@@ -25,17 +26,17 @@ const App = () => {
         <Route index element={<LoginPage />} />
 
         {/* DASHBOARD ROUTE */}
-        <Route path="dashboard" element={<DashboardLayout />}>
+        <Route
+          path="dashboard"
+          element={
+            <RequireAuth>
+              <DashboardLayout />
+            </RequireAuth>
+          }
+        >
           <Route path="home" />
           <Route path="create-job" element={<CreateJobPages />} />
-          <Route
-            path="applicant"
-            element={
-              <RequireAuth>
-                <ViewApplicantPage />
-              </RequireAuth>
-            }
-          />
+          <Route path="applicant" element={<ViewApplicantPage />} />
           <Route path="project" element={<Outlet />}>
             <Route index element={<ProjectPage />} />
             <Route path=":projectId" element={<ProjectLayout />}>
@@ -52,9 +53,11 @@ const App = () => {
 
   return (
     <Provider store={store}>
-      <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
-      </QueryClientProvider>
+      <PersistGate loading={null} persistor={persistor}>
+        <QueryClientProvider client={queryClient}>
+          <RouterProvider router={router} />
+        </QueryClientProvider>
+      </PersistGate>
     </Provider>
   );
 };
