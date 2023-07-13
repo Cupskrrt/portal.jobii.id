@@ -7,16 +7,13 @@ import {
   useSensors,
 } from "@dnd-kit/core";
 import KanbanLane from "./KanbanLane";
-import {
-  useGetProjectDetailQuery,
-  useUpdateTaskMutation,
-} from "../query/project/project.query";
-import { useParams } from "react-router-dom";
+import { useOutletContext, useParams } from "react-router-dom";
+import { useDragTaskMutation } from "../redux/project.slice";
 
 const KanbanBoard = () => {
   const { projectId } = useParams();
-  const { data: projectDetail } = useGetProjectDetailQuery(projectId);
-  const { mutate: updateTask } = useUpdateTaskMutation();
+  const project = useOutletContext();
+  const [dragTask, { isLoading }] = useDragTaskMutation();
 
   const lanes = [
     { id: 1, status: "NOT_STARTED", title: "Not Started" },
@@ -24,7 +21,7 @@ const KanbanBoard = () => {
     { id: 3, status: "DONE", title: "Done" },
   ];
 
-  const tasks = projectDetail?.data?.tasks;
+  const tasks = project?.tasks;
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -37,9 +34,13 @@ const KanbanBoard = () => {
       try {
         const cardId = draggedTask.id;
         const laneStatus = over.data.current.status;
-        const task = { id: cardId, status: laneStatus, projectId };
+        const task = {
+          id: cardId,
+          status: laneStatus,
+          projectId: projectId,
+        };
 
-        updateTask(task);
+        await dragTask(task);
       } catch (error) {
         console.error(`Error updating card ${draggedTask.id} status:`, error);
       }
