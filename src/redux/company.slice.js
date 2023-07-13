@@ -17,6 +17,36 @@ export const companyApi = createApi({
       }),
       providesTags: ["Company"],
     }),
+    getLowongan: builder.query({
+      query: () => ({
+        url: "getLowongans",
+        method: "GET",
+      }),
+      providesTags: ["Lowongan"],
+    }),
+    createLowongan: builder.mutation({
+      query: (data) => ({
+        url: "addLowongan",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["Lowongan"],
+    }),
+    deleteLowongan: builder.mutation({
+      query: (id) => ({
+        url: `deleteLowongan/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Lowongan"],
+    }),
+    createCompany: builder.mutation({
+      query: (company) => ({
+        url: "createCompany",
+        method: "POST",
+        body: company,
+      }),
+      invalidatesTags: ["Company"],
+    }),
     getApplicant: builder.query({
       query: () => ({
         url: "getAllApplicant",
@@ -28,19 +58,15 @@ export const companyApi = createApi({
         url: `getForm/${id}`,
       }),
     }),
-    createCompany: builder.query({
-      query: (company) => ({
-        url: "createCompany",
-        method: "POST",
-        body: company,
-      }),
-    }),
   }),
 });
 
 export const {
   useGetCompanyQuery,
   useGetApplicantQuery,
+  useGetLowonganQuery,
+  useDeleteLowonganMutation,
   useLazyGetSelectedApplicantQuery,
-  useCreateCompanyQuery,
+  useCreateCompanyMutation,
+  useCreateLowonganMutation,
 } = companyApi;

@@ -4,11 +4,34 @@ import { useEffect, useState } from "react";
 import { useFieldArray, useForm, Controller } from "react-hook-form";
 import Select from "react-select";
 import { HiTrash } from "react-icons/hi";
+import {
+  useCreateCompanyMutation,
+  useCreateLowonganMutation,
+  useDeleteLowonganMutation,
+  useGetCompanyQuery,
+  useGetLowonganQuery,
+} from "../redux/company.slice";
 
 const CreateJobPages = () => {
   const [loading, setLoading] = useState(false);
-  const [company, setCompany] = useState();
+  const [company, setCompany] = useState([]);
   const [selectedCompany, setSelectedCompany] = useState();
+
+  const { data: rawCompany } = useGetCompanyQuery();
+  const { data: lowongan } = useGetLowonganQuery();
+  const [createCompany] = useCreateCompanyMutation();
+  const [createLowongan] = useCreateLowonganMutation();
+  const [deleteLowongan] = useDeleteLowonganMutation();
+
+  useEffect(() => {
+    const result = rawCompany?.map((data) => {
+      return {
+        label: data.namaPerusahaan,
+        value: data.companyId,
+      };
+    });
+    setCompany(result);
+  }, [rawCompany]);
 
   const jobForm = useForm({
     defaultValues: {
@@ -45,7 +68,7 @@ const CreateJobPages = () => {
   });
 
   const handleJobListSubmit = async (data) => {
-    postLowongan(data);
+    await createLowongan(data);
     jobFormReset();
   };
 
@@ -69,7 +92,7 @@ const CreateJobPages = () => {
           companyImageUrl: imageUrl,
         };
 
-        companyMutate(formPayload);
+        await createCompany(formPayload);
         companyFormReset();
       } else {
         console.log("Error Occured");
@@ -88,11 +111,11 @@ const CreateJobPages = () => {
 
   return (
     <div className="grid grid-cols-2 border-black">
-      <div className="p-4 m-4 border-black border-[1px]">
+      <div className="p-4 m-4 bg-white rounded-md border-black border-[1px]">
         <form
           noValidate
           onSubmit={companyFormSubmit(handleCompanySubmit)}
-          className="flex flex-col gap-5 w-fit"
+          className="flex flex-col gap-5 bg-white w-fit"
         >
           <h3>Create Company</h3>
           <input
@@ -123,7 +146,7 @@ const CreateJobPages = () => {
           )}
         </form>
       </div>
-      <div className="order-1 p-4 m-4 border-black border-[1px]">
+      <div className="order-1 p-4 m-4 bg-white rounded-md border-black border-[1px]">
         <form
           noValidate
           onSubmit={jobFormSubmit(handleJobListSubmit)}
@@ -156,7 +179,7 @@ const CreateJobPages = () => {
             {...jobFormRegister("daerahPerusahaan")}
             className="border-black border-b-[1px]"
           />
-          {fields.map((field, index) => {
+          {fields?.map((field, index) => {
             return (
               <div className="form-control" key={field.id}>
                 <input
@@ -188,11 +211,11 @@ const CreateJobPages = () => {
           </button>
         </form>
       </div>
-      <div className="overflow-auto row-span-2 gap-5 p-4 m-4 border-black border-[1px] h-[50rem]">
+      <div className="overflow-auto row-span-2 gap-5 p-4 m-4 bg-white rounded-md border-black border-[1px] h-[50rem]">
         <h2 className="w-full font-bold border-b-2 border-b-black">
           Lowongan List
         </h2>
-        {lowonganData?.data?.map((data) => {
+        {lowongan?.map((data) => {
           return (
             <div key={data.lowonganId} className="p-2 mt-2 border-2">
               <div className="flex justify-between items-center">
@@ -205,7 +228,7 @@ const CreateJobPages = () => {
                 />
               </div>
               <p>Kualifikasi</p>
-              {data.kualifikasi[0].kualifikasiData.map((data) => {
+              {data?.kualifikasi[0]?.kualifikasiData?.map((data) => {
                 return (
                   <ul key={data.id}>
                     <li>{data}</li>

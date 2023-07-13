@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import ApplicantPdf from "../components/applicant/ApplicantPdf";
 import { PDFViewer } from "@react-pdf/renderer";
 import {
