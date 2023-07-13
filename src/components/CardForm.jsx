@@ -1,7 +1,7 @@
 import { DevTool } from "@hookform/devtools";
 import { useForm } from "react-hook-form";
-import { useUpdateTaskMutation } from "../query/project/project.query";
 import { useParams } from "react-router-dom";
+import { useUpdateTaskMutation } from "../redux/project.slice";
 
 const CardForm = ({ task, formPopup }) => {
   const { projectId } = useParams();
@@ -14,7 +14,7 @@ const CardForm = ({ task, formPopup }) => {
   const startDate = new Date(task.startDate);
   const endDate = new Date(task.endDate);
 
-  const { mutate: updateTask } = useUpdateTaskMutation();
+  const [updateTask] = useUpdateTaskMutation();
 
   const {
     register: taskFormRegister,
@@ -22,11 +22,11 @@ const CardForm = ({ task, formPopup }) => {
     handleSubmit: taskFormSubmit,
   } = taskForm;
 
-  const submitCardForm = (data) => {
+  const submitCardForm = async (data) => {
     const startDate = new Date(data.startDate).toISOString();
     const endDate = new Date(data.endDate).toISOString();
     const task = { ...data, startDate, endDate };
-    updateTask(task);
+    await updateTask(task);
     formPopup();
   };
 

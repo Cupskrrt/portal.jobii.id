@@ -2,13 +2,15 @@ import { HiDotsVertical, HiPencil, HiTrash, HiX } from "react-icons/hi";
 import { useDraggable } from "@dnd-kit/core";
 import { useState } from "react";
 import CardForm from "./CardForm";
-import { useDeleteTaskMutation } from "../query/project/project.query";
+import { useDeleteTaskMutation } from "../redux/project.slice";
+import { useParams } from "react-router-dom";
 
 const KanbanCard = ({ card }) => {
+  const { projectId } = useParams();
   const [settingPopup, setSettingPopup] = useState(false);
   const [cardFormPopup, setCardFormPopup] = useState(false);
 
-  const { mutate: deleteTask } = useDeleteTaskMutation();
+  const [deleteTask, { isLoading }] = useDeleteTaskMutation();
 
   const settingPopupHandler = () => {
     setSettingPopup(!settingPopup);
@@ -28,7 +30,8 @@ const KanbanCard = ({ card }) => {
     : undefined;
 
   const deleteCardHandler = async (taskId) => {
-    deleteTask(taskId);
+    const task = { id: taskId, projectId };
+    await deleteTask(task);
     setSettingPopup(!settingPopup);
   };
 

@@ -1,8 +1,8 @@
 import KanbanCard from "./KanbanCard";
 import { useDroppable } from "@dnd-kit/core";
 import { HiPlus } from "react-icons/hi";
-import { useCreateTaskMutation } from "../query/project/project.query";
 import { useParams } from "react-router-dom";
+import { useCreateTaskMutation } from "../redux/project.slice";
 
 const KanbanLane = ({ lane, cards }) => {
   const { projectId } = useParams();
@@ -12,16 +12,15 @@ const KanbanLane = ({ lane, cards }) => {
       status: lane.status,
     },
   });
-
-  const { mutate: createTask } = useCreateTaskMutation();
+  const [createTask, { isLoading }] = useCreateTaskMutation();
 
   const style = {
     color: isOver ? "green" : undefined,
   };
 
-  const createCard = (lane) => {
-    const data = { projectId, status: lane.status };
-    createTask(data);
+  const createCard = async (lane) => {
+    const task = { projectId, status: lane.status };
+    await createTask(task);
   };
 
   return (

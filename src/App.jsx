@@ -1,4 +1,5 @@
 import {
+  Outlet,
   Route,
   RouterProvider,
   createBrowserRouter,
@@ -9,11 +10,13 @@ import DashboardLayout from "./layouts/DashboardLayout";
 import CreateJobPages from "./pages/CreateJobPage";
 import ViewApplicantPage from "./pages/ViewApplicantPage";
 import RequireAuth from "./utils/RequireAuth";
-import ProjectLayout from "./layouts/ProjectLayout";
 import ProjectPage from "./pages/ProjectPage";
 import StoragePage from "./pages/StoragePage";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import ProjectLayout from "./layouts/ProjectLayout";
 import KanbanBoard from "./components/KanbanBoard";
+import { Provider } from "react-redux";
+import { store } from "./redux/store";
 
 const App = () => {
   const router = createBrowserRouter(
@@ -24,14 +27,7 @@ const App = () => {
         {/* DASHBOARD ROUTE */}
         <Route path="dashboard" element={<DashboardLayout />}>
           <Route path="home" />
-          <Route
-            path="create-job"
-            element={
-              <RequireAuth>
-                <CreateJobPages />
-              </RequireAuth>
-            }
-          />
+          <Route path="create-job" element={<CreateJobPages />} />
           <Route
             path="applicant"
             element={
@@ -40,8 +36,9 @@ const App = () => {
               </RequireAuth>
             }
           />
-          <Route path="project" element={<ProjectLayout />}>
-            <Route path=":projectId" element={<ProjectPage />}>
+          <Route path="project" element={<Outlet />}>
+            <Route index element={<ProjectPage />} />
+            <Route path=":projectId" element={<ProjectLayout />}>
               <Route path="task" element={<KanbanBoard />} />
             </Route>
           </Route>
@@ -54,9 +51,11 @@ const App = () => {
   const queryClient = new QueryClient();
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-    </QueryClientProvider>
+    <Provider store={store}>
+      <QueryClientProvider client={queryClient}>
+        <RouterProvider router={router} />
+      </QueryClientProvider>
+    </Provider>
   );
 };
 

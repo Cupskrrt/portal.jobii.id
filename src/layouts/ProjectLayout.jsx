@@ -1,12 +1,15 @@
-import { Outlet } from "react-router-dom";
-import ProjectSidebar from "../components/ProjectSidebar";
+import { Outlet, useParams } from "react-router-dom";
+import ProjectNavbar from "../components/ProjectNavbar";
+import { useGetProjectDetailQuery } from "../redux/project.slice";
 
 const ProjectLayout = () => {
+  const { projectId } = useParams();
+  const { data: project } = useGetProjectDetailQuery(projectId);
   return (
-    <div className="flex flex-row h-screen">
-      <ProjectSidebar />
+    <div className="flex flex-col h-screen">
+      <ProjectNavbar projectName={project?.name} />
       <div className="flex-1">
-        <Outlet />
+        <Outlet context={project} />
       </div>
     </div>
   );
