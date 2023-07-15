@@ -1,10 +1,12 @@
+import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
 
 const RequireAuth = ({ children }) => {
-  const { authenticated } = useAuth();
+  //Create logic
+  const userAuth = (state) => state.persistedReducer.user.auth;
+  const auth = useSelector(userAuth);
 
-  return authenticated ? children : <Navigate to={"/"} replace />;
+  return auth ? children : <Navigate to={"/"} replace />;
 };
 
 export default RequireAuth;

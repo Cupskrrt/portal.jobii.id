@@ -2,17 +2,36 @@ import { DevTool } from "@hookform/devtools";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useFieldArray, useForm, Controller } from "react-hook-form";
-import {
-  fetchCompany,
-  postCreateCompany,
-  postJob,
-} from "../utils/api/companyApi";
 import Select from "react-select";
+import { HiTrash } from "react-icons/hi";
+import {
+  useCreateCompanyMutation,
+  useCreateLowonganMutation,
+  useDeleteLowonganMutation,
+  useGetCompanyQuery,
+  useGetLowonganQuery,
+} from "../redux/company.slice";
 
 const CreateJobPages = () => {
-  const [image, setImage] = useState();
-  const [company, setCompany] = useState();
+  const [loading, setLoading] = useState(false);
+  const [company, setCompany] = useState([]);
   const [selectedCompany, setSelectedCompany] = useState();
+
+  const { data: rawCompany } = useGetCompanyQuery();
+  const { data: lowongan } = useGetLowonganQuery();
+  const [createCompany] = useCreateCompanyMutation();
+  const [createLowongan] = useCreateLowonganMutation();
+  const [deleteLowongan] = useDeleteLowonganMutation();
+
+  useEffect(() => {
+    const result = rawCompany?.map((data) => {
+      return {
+        label: data.namaPerusahaan,
+        value: data.companyId,
+      };
+    });
+    setCompany(result);
+  }, [rawCompany]);
 
   const jobForm = useForm({
     defaultValues: {
@@ -28,21 +47,6 @@ const CreateJobPages = () => {
     },
   });
 
-  const getCompany = async () => {
-    const { data } = await fetchCompany();
-    const result = data.map((data) => {
-      return {
-        label: data.namaPerusahaan,
-        value: data.companyId,
-      };
-    });
-    setCompany(result);
-  };
-
-  useEffect(() => {
-    getCompany();
-  }, []);
-
   const {
     register: jobFormRegister,
     control,
@@ -54,7 +58,7 @@ const CreateJobPages = () => {
   const {
     register: companyFormRegister,
     handleSubmit: companyFormSubmit,
-    setValue: companyFormSetValue,
+    control: companyFormControl,
     reset: companyFormReset,
   } = companyForm;
 
@@ -63,33 +67,41 @@ const CreateJobPages = () => {
     control,
   });
 
-  const uploadImage = () => {
-    const formData = new FormData();
-    formData.append("file", image);
-    formData.append("upload_preset", "uemrpa6m");
-
-    if (image) {
-      axios
-        .post(
-          "https://api.cloudinary.com/v1_1/del1943mz/image/upload",
-          formData
-        )
-        .then((res) => {
-          companyFormSetValue("companyImageUrl", res.data.secure_url);
-        });
-    }
-  };
-
   const handleJobListSubmit = async (data) => {
-    await postJob(data);
+    await createLowongan(data);
     jobFormReset();
   };
 
   const handleCompanySubmit = async (data) => {
-    uploadImage();
-    await postCreateCompany(data);
-    console.log(data);
-    companyFormReset();
+    setLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", data.image[0]);
+      formData.append("upload_preset", "uemrpa6m");
+
+      const uploadImage = await axios.post(
+        "https://api.cloudinary.com/v1_1/del1943mz/image/upload",
+        formData
+      );
+
+      if (uploadImage.status === 200) {
+        const imageUrl = uploadImage.data.secure_url;
+
+        const formPayload = {
+          ...data,
+          companyImageUrl: imageUrl,
+        };
+
+        await createCompany(formPayload);
+        companyFormReset();
+      } else {
+        console.log("Error Occured");
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleCompanyChange = (e) => {
@@ -98,12 +110,12 @@ const CreateJobPages = () => {
   };
 
   return (
-    <div className="border-2 border-black">
-      <div className="p-4 m-4 border-black border-[1px]">
+    <div className="grid grid-cols-2 border-black">
+      <div className="p-4 m-4 bg-white rounded-md border-black border-[1px]">
         <form
           noValidate
           onSubmit={companyFormSubmit(handleCompanySubmit)}
-          className="flex flex-col gap-5 w-fit"
+          className="flex flex-col gap-5 bg-white w-fit"
         >
           <h3>Create Company</h3>
           <input
@@ -111,18 +123,30 @@ const CreateJobPages = () => {
             className="border-b-black border-b-[1px]"
             {...companyFormRegister("namaPerusahaan", { required: true })}
           />
-          <p>Mohon untuk menunggu sampai nama filenya muncul</p>
-          <input type="file" onChange={(e) => setImage(e.target.files[0])} />
-
-          <button
-            className="border-2 border-black active:bg-gray-500"
-            onSubmit={companyFormSubmit(handleCompanySubmit)}
-          >
-            Create Company
-          </button>
+          <p>Logo Perusahaan</p>
+          <input
+            type="file"
+            {...companyFormRegister("image")}
+            accept="image/jpg, image/jpeg, image/png, .svg"
+          />
+          {loading ? (
+            <button
+              disabled
+              className="border-2 border-black active:bg-gray-500"
+            >
+              Submitting
+            </button>
+          ) : (
+            <button
+              className="border-2 border-black active:bg-gray-500"
+              onSubmit={companyFormSubmit(handleCompanySubmit)}
+            >
+              Create Company
+            </button>
+          )}
         </form>
       </div>
-      <div className="p-4 m-4 border-black border-[1px]">
+      <div className="order-1 p-4 m-4 bg-white rounded-md border-black border-[1px]">
         <form
           noValidate
           onSubmit={jobFormSubmit(handleJobListSubmit)}
@@ -136,10 +160,10 @@ const CreateJobPages = () => {
               <Select
                 {...field}
                 options={company}
+                onChange={handleCompanyChange}
                 value={company?.filter(function (option) {
                   return option.value === selectedCompany;
                 })}
-                onChange={handleCompanyChange}
                 placeholder="Pilih perusahaan"
               />
             )}
@@ -155,7 +179,7 @@ const CreateJobPages = () => {
             {...jobFormRegister("daerahPerusahaan")}
             className="border-black border-b-[1px]"
           />
-          {fields.map((field, index) => {
+          {fields?.map((field, index) => {
             return (
               <div className="form-control" key={field.id}>
                 <input
@@ -187,7 +211,35 @@ const CreateJobPages = () => {
           </button>
         </form>
       </div>
-      <DevTool control={control} />
+      <div className="overflow-auto row-span-2 gap-5 p-4 m-4 bg-white rounded-md border-black border-[1px] h-[50rem]">
+        <h2 className="w-full font-bold border-b-2 border-b-black">
+          Lowongan List
+        </h2>
+        {lowongan?.map((data) => {
+          return (
+            <div key={data.lowonganId} className="p-2 mt-2 border-2">
+              <div className="flex justify-between items-center">
+                <p className="font-bold">
+                  {data.posisi} - {data.Company.namaPerusahaan}
+                </p>
+                <HiTrash
+                  className="hover:cursor-pointer w-fit h-[1.5rem]"
+                  onClick={() => deleteLowongan(data.lowonganId)}
+                />
+              </div>
+              <p>Kualifikasi</p>
+              {data?.kualifikasi[0]?.kualifikasiData?.map((data) => {
+                return (
+                  <ul key={data.id}>
+                    <li>{data}</li>
+                  </ul>
+                );
+              })}
+            </div>
+          );
+        })}
+      </div>
+      <DevTool control={companyFormControl} />
     </div>
   );
 };

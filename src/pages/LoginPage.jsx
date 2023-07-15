@@ -1,25 +1,29 @@
 import { useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
-import { useUser } from "../context/UserContext";
+import { useNavigate } from "react-router-dom";
+import { useLoginMutation } from "../redux/auth.slice";
+import { setUser, setToken, setAuth } from "../redux/user.slice";
+import { useDispatch } from "react-redux";
 
 const LoginPage = () => {
-  const { login } = useAuth();
-  const { getProfile } = useUser();
   const loginForm = useForm();
-
   const navigate = useNavigate();
+  const [loginMutation] = useLoginMutation();
+  const dispatch = useDispatch();
 
-  const { register, control, handleSubmit } = loginForm;
+  const { register, handleSubmit } = loginForm;
 
   const handleLogin = async (data) => {
-    try {
-      await login(data);
-      navigate("/dashboard");
-      await getProfile();
-    } catch (err) {
-      console.log(err);
-    }
+    loginMutation(data)
+      .unwrap()
+      .then((loginData) => {
+        dispatch(setToken(loginData.token));
+        dispatch(setAuth());
+        navigate("/dashboard");
+      })
+      .catch((rejected) =>
+        // alert(rejected?.data?.msg ? rejected?.data?.msg : rejected?.data?.error)
+        alert(JSON.stringify(rejected))
+      );
   };
 
   return (

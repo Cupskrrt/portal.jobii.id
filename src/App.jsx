@@ -1,20 +1,22 @@
 import {
+  Outlet,
   Route,
   RouterProvider,
   createBrowserRouter,
   createRoutesFromElements,
 } from "react-router-dom";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import LoginPage from "./pages/LoginPage";
 import DashboardLayout from "./layouts/DashboardLayout";
 import CreateJobPages from "./pages/CreateJobPage";
-import { AuthProvider } from "./context/AuthContext";
-import { UserProvider } from "./context/UserContext";
 import ViewApplicantPage from "./pages/ViewApplicantPage";
 import RequireAuth from "./utils/RequireAuth";
 import ProjectPage from "./pages/ProjectPage";
-
-const queryClient = new QueryClient();
+import StoragePage from "./pages/StoragePage";
+import ProjectLayout from "./layouts/ProjectLayout";
+import KanbanBoard from "./components/KanbanBoard";
+import { Provider } from "react-redux";
+import { persistor, store } from "./redux/store";
+import { PersistGate } from "redux-persist/integration/react";
 
 const App = () => {
   const router = createBrowserRouter(
@@ -23,7 +25,15 @@ const App = () => {
         <Route index element={<LoginPage />} />
 
         {/* DASHBOARD ROUTE */}
-        <Route path="dashboard" element={<DashboardLayout />}>
+        <Route
+          path="dashboard"
+          element={
+            <RequireAuth>
+              <DashboardLayout />
+            </RequireAuth>
+          }
+        >
+          <Route path="home" />
           <Route
             path="create-job"
             element={
@@ -40,11 +50,38 @@ const App = () => {
               </RequireAuth>
             }
           />
+          <Route path="project" element={<Outlet />}>
+            <Route
+              index
+              element={
+                <RequireAuth>
+                  <ProjectPage />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path=":projectId"
+              element={
+                <RequireAuth>
+                  <ProjectLayout />
+                </RequireAuth>
+              }
+            >
+              <Route
+                path="task"
+                element={
+                  <RequireAuth>
+                    <KanbanBoard />
+                  </RequireAuth>
+                }
+              />
+            </Route>
+          </Route>
           <Route
-            path="project"
+            path="Storage"
             element={
               <RequireAuth>
-                <ProjectPage />
+                <StoragePage />
               </RequireAuth>
             }
           />
@@ -54,13 +91,11 @@ const App = () => {
   );
 
   return (
-    <AuthProvider>
-      <UserProvider>
-        <QueryClientProvider client={queryClient}>
-          <RouterProvider router={router} />
-        </QueryClientProvider>
-      </UserProvider>
-    </AuthProvider>
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <RouterProvider router={router} />
+      </PersistGate>
+    </Provider>
   );
 };
 
