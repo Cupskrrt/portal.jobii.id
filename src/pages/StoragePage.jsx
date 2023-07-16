@@ -1,5 +1,5 @@
 // StoragePage.js
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import FileCard from '../components/FileCard';
 import FolderCard from '../components/FolderCard';
 import TopBar from '../components/StorageTopBar';
@@ -73,3 +73,4 @@ const StoragePage = () => {
 };
 
 export default StoragePage;
+  

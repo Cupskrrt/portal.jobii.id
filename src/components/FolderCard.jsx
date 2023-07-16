@@ -1,4 +1,4 @@
-import React from "react";
+
 import { HiFolder } from "react-icons/hi";
 
 const FolderCard = ({ onContextMenu }) => {

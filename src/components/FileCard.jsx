@@ -1,4 +1,4 @@
-import React from "react";
+
 import { HiOutlineDotsVertical } from "react-icons/hi";
 
 const THUMBNAIL = "https://tecdn.b-cdn.net/img/new/standard/nature/184.jpg"; // Default thumbnail URL
