@@ -5,7 +5,7 @@ import FolderCard from './FolderCard';
 const fetcher = url => fetch(url).then(res => res.json())
 
 const FoldersList = () => {
-  const { data: folders, error, mutate } = useSWR('https://your-api-url.com/endpoint', fetcher);
+  const { data: folders, error, mutate } = useSWR('http://192.168.18.69:5000/getDirectory', fetcher);
 
   if (error) return <div>Failed to load</div>
   if (!folders) return <div>Loading...</div>

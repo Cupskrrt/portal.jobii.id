@@ -5,7 +5,7 @@ import FileCard from './FileCard';
 const fetcher = url => fetch(url).then(res => res.json())
 
 const FilesList = () => {
-  const { data: files, error, mutate } = useSWR('https://your-api-url.com/endpoint', fetcher);
+  const { data: files, error, mutate } = useSWR('http://192.168.18.69:5000/getDirectory', fetcher);
 
   if (error) return <div>Failed to load</div>
   if (!files) return <div>Loading...</div>
