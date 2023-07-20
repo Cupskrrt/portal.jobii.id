@@ -53,7 +53,7 @@ const StoragePage = () => {
         </div>
 
         <h1 className='font-bold text-lg mb-2 ml-2'>Files</h1>
-        <div className='flex flex-wrap justify-start'>
+        <div className='flex flex-wrap'>
           <FilesList onContextMenu={handleContextMenu}/>
         </div>
 

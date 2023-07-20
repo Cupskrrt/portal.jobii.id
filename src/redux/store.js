@@ -3,6 +3,7 @@ import { projectApi } from "./project.slice";
 import userReducer from "./user.slice";
 import { authApi } from "./auth.slice";
 import { companyApi } from "./company.slice";
+import { storageApi } from "./storage.slice";
 import storageSession from "redux-persist/lib/storage/session";
 import {
   FLUSH,
@@ -35,6 +36,7 @@ export const store = configureStore({
     [projectApi.reducerPath]: projectApi.reducer,
     [authApi.reducerPath]: authApi.reducer,
     [companyApi.reducerPath]: companyApi.reducer,
+    [storageApi.reducerPath]: storageApi.reducer,
   },
   devTools: import.meta.env.NODE_ENV !== "production",
   middleware: (getDefaultMiddleware) =>
@@ -45,7 +47,8 @@ export const store = configureStore({
     })
       .concat(projectApi.middleware)
       .concat(authApi.middleware)
-      .concat(companyApi.middleware),
+      .concat(companyApi.middleware)
+      .concat(storageApi.middleware)
 });
 
 export const persistor = persistStore(store);
