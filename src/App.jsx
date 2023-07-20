@@ -28,51 +28,51 @@ const App = () => {
         <Route
           path="dashboard"
           element={
-            <RequireAuth>
+            
               <DashboardLayout />
-            </RequireAuth>
+            
           }
         >
           <Route path="home" />
           <Route
             path="create-job"
             element={
-              <RequireAuth>
+              
                 <CreateJobPages />
-              </RequireAuth>
+              
             }
           />
           <Route
             path="applicant"
             element={
-              <RequireAuth>
+              
                 <ViewApplicantPage />
-              </RequireAuth>
+              
             }
           />
           <Route path="project" element={<Outlet />}>
             <Route
               index
               element={
-                <RequireAuth>
+                
                   <ProjectPage />
-                </RequireAuth>
+                
               }
             />
             <Route
               path=":projectId"
               element={
-                <RequireAuth>
+                
                   <ProjectLayout />
-                </RequireAuth>
+                
               }
             >
               <Route
                 path="task"
                 element={
-                  <RequireAuth>
+                  
                     <KanbanBoard />
-                  </RequireAuth>
+                  
                 }
               />
             </Route>
@@ -80,9 +80,9 @@ const App = () => {
           <Route
             path="Storage"
             element={
-              <RequireAuth>
+              
                 <StoragePage />
-              </RequireAuth>
+              
             }
           />
         </Route>

@@ -1,5 +1,4 @@
 import { DevTool } from "@hookform/devtools";
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { useFieldArray, useForm, Controller } from "react-hook-form";
 import Select from "react-select";

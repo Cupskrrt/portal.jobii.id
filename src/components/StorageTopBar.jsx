@@ -6,17 +6,26 @@ const TopBar = () => {
   const [newDropdownOpen, setNewDropdownOpen] = useState(false);
   const [uploadDropdownOpen, setUploadDropdownOpen] = useState(false);
 
-  const handleSearchChange = (event) => {
+  const handleSearchChange = async (event) => {
     setSearch(event.target.value);
-    // This is where you will perform your search. 
-    // For now, we're just logging the input value.
+    // Remove this line once you've connected to your API
     console.log(event.target.value);
+    
+    //for API compatibility
+    /*
+    try {
+      const response = await fetch(`https://your-api-url.com/search?query=${event.target.value}`);
+      const results = await response.json();
+      // Do something with the search results
+    } catch (error) {
+      console.error('Error:', error);
+    }
+    */
   };
 
   const handleNewDropdownClick = (event) => {
     event.stopPropagation(); // Prevent the event from propagating to the window
     setNewDropdownOpen(!newDropdownOpen);
-    // If the upload dropdown is open, close it
     if (uploadDropdownOpen) {
       setUploadDropdownOpen(false);
     }
@@ -25,7 +34,6 @@ const TopBar = () => {
   const handleUploadDropdownClick = (event) => {
     event.stopPropagation(); // Prevent the event from propagating to the window
     setUploadDropdownOpen(!uploadDropdownOpen);
-    // If the new dropdown is open, close it
     if (newDropdownOpen) {
       setNewDropdownOpen(false);
     }
@@ -38,12 +46,14 @@ const TopBar = () => {
     };
     window.addEventListener('click', hideDropdowns);
     window.addEventListener('contextmenu', hideDropdowns);
+    window.addEventListener('scroll', hideDropdowns);
 
     return () => {
       window.removeEventListener('click', hideDropdowns);
       window.removeEventListener('contextmenu', hideDropdowns);
+      window.removeEventListener('scroll', hideDropdowns);
     };
-  }, []); // Pass an empty dependency array to only run this effect on mount and unmount
+  }, []);
 
   return (
     <div className="flex gap-4 p-4 items-center bg-white shadow-md sticky top-0 z-50">

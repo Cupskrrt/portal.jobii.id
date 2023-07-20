@@ -1,9 +1,6 @@
-
 import { HiFolder } from "react-icons/hi";
 
-const FolderCard = ({ onContextMenu }) => {
-  const folderName = "Folder Name"; // Default folder name
-
+const FolderCard = ({ folderName, onContextMenu }) => {
   const handleIconClick = (event) => {
     event.stopPropagation(); // Prevent the event from propagating to the window
     onContextMenu(event);
@@ -24,7 +21,7 @@ const FolderCard = ({ onContextMenu }) => {
         <HiFolder className="h-6 w-6 text-black" />
       </div>
       <div>
-        <h2 className="text-xs font-[15]">{folderName}</h2>
+        <h2 className="text-xs font-[15px]">{folderName}</h2>
         {/* Add other details here */}
       </div>
     </div>
