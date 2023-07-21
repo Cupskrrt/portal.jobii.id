@@ -5,7 +5,7 @@ import TopBar from '../components/StorageTopBar';
 import ContextMenu from '../components/ContextMenu';
 import { useGetFilesQuery } from "../redux/storage.slice"; // import useGetFilesQuery here
 
-const StoragePage = () => {
+const FileManager = () => {
   const [contextMenu, setContextMenu] = useState({visible: false, x: 0, y: 0});
   const [currentDirectory, setCurrentDirectory] = useState("/");
   const { data, error } = useGetFilesQuery(); // use the query hook here
@@ -39,6 +39,16 @@ const StoragePage = () => {
     };
   }, []); // Pass an empty dependency array to only run this effect on mount and unmount
 
+  const folderPaths = data.content.filter((path) => {
+    const parts = path.replace(currentDirectory, '').split("/");
+    return parts.length === 2 && path.startsWith(currentDirectory) && path.endsWith("/");
+  });
+
+  const filePaths = data.content.filter((path) => {
+    const parts = path.split("/");
+    return (!path.endsWith("/") && parts[0] === currentDirectory);
+  });
+
   return (
     <>
       <TopBar onSearch = {handleSearch} />
@@ -47,32 +57,34 @@ const StoragePage = () => {
           Breadcrumb Soon..
         </div>
 
-        <h1 className='font-bold text-lg mb-2 ml-2 mt-4'>Folders</h1>
-        <div className="flex flex-wrap">
-          <FoldersList 
-            onContextMenu={handleContextMenu} 
-            data={data} 
-            error={error} 
-            currentDirectory={currentDirectory} 
-            changeDirectory={setCurrentDirectory}
-          />
-        </div>
+        {(folderPaths.length > 0 || filePaths.length > 0) && (
+          <>
+            <h1 className='font-bold text-lg mb-2 ml-2 mt-4'>Folders</h1>
+            <div className="flex flex-wrap">
+              <FoldersList 
+                onContextMenu={handleContextMenu} 
+                data={folderPaths} 
+                currentDirectory={currentDirectory} 
+                changeDirectory={setCurrentDirectory}
+              />
+            </div>
 
-        <h1 className='font-bold text-lg mb-2 ml-2'>Files</h1>
-        <div className='flex flex-wrap'>
-          <FilesList 
-            onContextMenu={handleContextMenu} 
-            data={data} 
-            error={error} 
-            currentDirectory={currentDirectory}
-            changeDirectory={setCurrentDirectory}
-          />
-        </div>
+            <h1 className='font-bold text-lg mb-2 ml-2'>Files</h1>
+            <div className='flex flex-wrap'>
+              <FilesList 
+                onContextMenu={handleContextMenu} 
+                data={filePaths} 
+                currentDirectory={currentDirectory}
+                changeDirectory={setCurrentDirectory}
+              />
+            </div>
 
-        {contextMenu.visible && <ContextMenu style={{top: `${contextMenu.y}px`, left: `${contextMenu.x}px`}} onOptionClick={handleOptionClick} />}
+            {contextMenu.visible && <ContextMenu style={{top: `${contextMenu.y}px`, left: `${contextMenu.x}px`}} onOptionClick={handleOptionClick} />}
+          </>
+        )}
       </div>
     </>
   );
 };
 
-export default StoragePage;
+export default FileManager;

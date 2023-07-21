@@ -1,10 +1,7 @@
 import { useState } from "react";
 import FileCard from "./FileCard";
-import { useGetFilesQuery } from "../redux/storage.slice";
 
-const FilesList = () => {
-  const { data, error } = useGetFilesQuery();
-
+const FilesList = ({ onContextMenu, data, error, currentDirectory, }) => {
   if (error) return <div>Failed to load</div>;
   if (!data) return <div>Loading...</div>;
 
@@ -13,19 +10,19 @@ const FilesList = () => {
     return parts[parts.length - 1];
   };
 
-  const handleContextMenu = (event) => {
+  const handleContextMenu = (event, path) => {
     event.preventDefault();
-    // Handle context menu actions here
-    console.log("Context menu opened!");
+    onContextMenu(event, path);
+    console.log("Context menu opened! file");
   };
 
-  const currentFolder = "";
-
   // Filter the 'content' array to get only the paths that do not end with a '/'
+  // and belong to the current directory
   const filePaths = data.content.filter((path) => {
     const parts = path.split("/");
-    // Check if the path is a file within the current folder
-    return (!path.endsWith("/") && (parts.length === 2 || parts[1] === currentFolder));
+    // Check if the path is a file within the current directory
+    return (!path.endsWith("/") && path.startsWith(currentDirectory) && path.replace(currentDirectory, '').split("/").length === 1);
+
   });
 
   // Get file names from 'filePaths'
@@ -42,7 +39,8 @@ const FilesList = () => {
             key={index}
             thumbnail={preview} // Use the preview as the thumbnail
             fileName={fileName}
-            onContextMenu={handleContextMenu}
+            onContextMenu={(event) => handleContextMenu(event, path)}
+            path={path}
           />
         );
       })}

@@ -1,13 +1,14 @@
 import { HiOutlineDotsVertical } from "react-icons/hi";
 
-const FileCard = ({ thumbnail, fileName, onContextMenu }) => {
+const FileCard = ({ thumbnail, fileName, onContextMenu, path }) => {
   const handleIconClick = (event) => {
     event.stopPropagation();
-    onContextMenu(event);
+    onContextMenu(event, path);
   };
 
   const handleCardClick = () => {
-    console.log("Card clicked!");
+    
+    console.log(`file ${fileName} at ${path} was clicked`);
   };
 
   return (
