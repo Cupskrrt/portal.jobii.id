@@ -1,39 +1,35 @@
 import { useState, useEffect } from "react";
 import FolderCard from "./FolderCard";
 
-const FoldersList = ({ onContextMenu, data, error, currentDirectory, changeDirectory }) => {
-  if (error) return <div>Failed to load</div>;
-  if (!data) return <div>Loading...</div>;
+const FoldersList = ({ onContextMenu, data, currentDirectory, changeDirectory }) => {
 
-  const getFolderName = (path) => {
+  const getItemName = (path) => {
     const parts = path.replace(currentDirectory, '').split("/");
     return parts[0]; // Get the first part as folder name
   };
   
-  const handleContextMenu = (event) => {
-    event.preventDefault();
-    onContextMenu(event);
-    console.log("Context menu opened! folder");
-  };
-
   // Filter the 'content' array to get only the paths that are direct children of the current directory
   const folderPaths = data.content.filter((path) => {
     const parts = path.replace(currentDirectory, '').split("/");
     return parts.length === 2 && path.startsWith(currentDirectory) && !path.endsWith("/");
   });
 
+  console.log("folderPaths", folderPaths); // DEBUG
+
   // Get unique folder names from 'folderPaths'
-  const folderNames = Array.from(new Set(folderPaths.map(getFolderName)));
+  const itemNames = Array.from(new Set(folderPaths.map(getItemName)));
+
+  console.log("itemNames", itemNames); // DEBUG
 
   return (
     <div className="flex flex-wrap">
-      {folderNames.map((folderName, index) => {
-        const path = `${currentDirectory}${folderName}/`; // Use currentDirectory to construct path
+      {itemNames.map((itemName, index) => {
+        const path = `${currentDirectory}${itemName}/`; // Use currentDirectory to construct path
         return (
           <FolderCard
             key={index}
-            folderName={folderName}
-            onContextMenu={handleContextMenu}
+            itemName={itemName}
+            onContextMenu={onContextMenu}
             path={path}
             changeDirectory={changeDirectory}
           />

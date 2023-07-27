@@ -1,30 +1,35 @@
 import { useState, useEffect } from 'react';
 import { HiOutlineDownload, HiOutlineUpload, HiPlusSm, HiChevronDown, HiSearch, HiFolder, HiDocument } from 'react-icons/hi';
+import { useUploadFilesMutation, } from "../redux/storage.slice"; 
 
-const TopBar = () => {
-  const [search, setSearch] = useState('');
+const TopBar = ({onSearch}) => {
+  const [search, setsearch] = useState('');
   const [newDropdownOpen, setNewDropdownOpen] = useState(false);
   const [uploadDropdownOpen, setUploadDropdownOpen] = useState(false);
+  const [uploadFiles, {isLoading} ] = useUploadFilesMutation();
 
-  const handleSearchChange = async (event) => {
-    setSearch(event.target.value);
-    // Remove this line once you've connected to your API
-    console.log(event.target.value);
-    
-    //for API compatibility
-    /*
-    try {
-      const response = await fetch(`https://your-api-url.com/search?query=${event.target.value}`);
-      const results = await response.json();
-      // Do something with the search results
-    } catch (error) {
-      console.error('Error:', error);
+  const handleSearchChange = (e) => {
+    setsearch(e.target.value);
+  };
+
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      onSearch(search);
     }
-    */
+  };
+
+  const handleFileUpload = (event) => {
+    const files = Array.from(event.target.files);
+    uploadFiles(files);
+  };
+
+  const handleFileUploadClick = (event) => {
+    event.stopPropagation();
+    document.getElementById("fileUploadInput").click();
   };
 
   const handleNewDropdownClick = (event) => {
-    event.stopPropagation(); // Prevent the event from propagating to the window
+    event.stopPropagation(); 
     setNewDropdownOpen(!newDropdownOpen);
     if (uploadDropdownOpen) {
       setUploadDropdownOpen(false);
@@ -32,7 +37,7 @@ const TopBar = () => {
   };
 
   const handleUploadDropdownClick = (event) => {
-    event.stopPropagation(); // Prevent the event from propagating to the window
+    event.stopPropagation(); 
     setUploadDropdownOpen(!uploadDropdownOpen);
     if (newDropdownOpen) {
       setNewDropdownOpen(false);
@@ -77,7 +82,20 @@ const TopBar = () => {
           <div className="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-white">
             <div className="py-1 rounded-md bg-white shadow-xs">
               <a href="#" className="flex items-center block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><HiFolder className="mr-2" /> Upload Folder</a>
-              <a href="#" className="flex items-center block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><HiDocument className="mr-2" /> Upload File</a>
+              <a 
+                href="#" 
+                className="flex items-center block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                onClick={handleFileUploadClick}  // Add the onClick handler here
+              >
+                <HiDocument className="mr-2" /> Upload File
+              </a>
+              <input 
+                type="file" 
+                id="fileUploadInput" 
+                style={{ display: "none" }} 
+                multiple 
+                onChange={handleFileUpload} 
+              />
             </div>
           </div>
         }
@@ -93,6 +111,7 @@ const TopBar = () => {
           className='flex-auto px-1' 
           value={search}
           onChange={handleSearchChange}
+          onKeyDown={handleKeyDown}
         />
       </div>
     </div>

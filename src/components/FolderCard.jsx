@@ -1,17 +1,18 @@
 import { HiFolder } from "react-icons/hi";
 
-const FolderCard = ({ folderName, onContextMenu, path, selected, changeDirectory}) => {
+const FolderCard = ({ itemName, onContextMenu, path, selected, changeDirectory }) => {
   const handleIconClick = (event) => {
     event.stopPropagation(); // Prevent the event from propagating to the window
-    onContextMenu(event);
+    onContextMenu(event, path, itemName);
+    console.log(`Context menu opened for ${itemName}`)
   };
 
   const handleCardClick = () => {
-    console.log(`Folder ${folderName} at ${path} clicked!`);
+    console.log(`Folder ${itemName} at ${path} clicked!`);
   };
 
   const handleCardDoubleClick = () => {
-    console.log(`changing diretory to ${folderName}`);
+    console.log(`changing directory to ${itemName}`);
     changeDirectory(path);
   };
 
@@ -30,7 +31,7 @@ const FolderCard = ({ folderName, onContextMenu, path, selected, changeDirectory
         <HiFolder className="h-6 w-6 text-black" />
       </div>
       <div>
-        <h2 className="text-xs font-[15px]">{folderName}</h2>
+        <h2 className="text-xs font-[15px]">{itemName}</h2>
       </div>
     </div>
   );
