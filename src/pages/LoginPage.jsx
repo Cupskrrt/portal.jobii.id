@@ -13,17 +13,17 @@ const LoginPage = () => {
   const { register, handleSubmit } = loginForm;
 
   const handleLogin = async (data) => {
-    // loginMutation(data)
-    //   .unwrap()
-    //   .then((loginData) => {
-    //     dispatch(setToken(loginData.token));
-    //     dispatch(setAuth());
-    //     navigate("/dashboard");
-    //   })
-    //   .catch((rejected) =>
-    //     // alert(rejected?.data?.msg ? rejected?.data?.msg : rejected?.data?.error)
-    //     alert(JSON.stringify(rejected))
-    //   );
+    loginMutation(data)
+      .unwrap()
+      .then((loginData) => {
+        dispatch(setToken(loginData.token));
+        dispatch(setAuth());
+        navigate("/dashboard");
+      })
+      .catch((rejected) =>
+        // alert(rejected?.data?.msg ? rejected?.data?.msg : rejected?.data?.error)
+        alert(JSON.stringify(rejected))
+      );
     navigate("/dashboard");
   };
 

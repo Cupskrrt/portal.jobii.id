@@ -5,7 +5,7 @@ const FileCard = ({ thumbnail, itemName, path, onContextMenu }) => {
   const handleContextMenu = (event) => {
     event.stopPropagation();
     onContextMenu(event, path, itemName);
-    console.log(`Context menu opened! ${path}`);
+    console.log(`Context menu opened! ${path} , ${itemName}`);
   };
   
   const handleCardClick = () => {

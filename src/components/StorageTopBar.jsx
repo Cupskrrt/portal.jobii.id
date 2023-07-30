@@ -20,7 +20,10 @@ const TopBar = ({onSearch}) => {
 
   const handleFileUpload = (event) => {
     const files = Array.from(event.target.files);
-    uploadFiles(files);
+    console.log(files); // Log the files array
+    uploadFiles(files)
+      .then((response) => console.log(response)) // Log the server response
+      .catch((error) => console.error(error)); // Log any error that occurs
   };
 
   const handleFileUploadClick = (event) => {

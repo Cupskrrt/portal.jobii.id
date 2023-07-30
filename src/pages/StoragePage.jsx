@@ -3,9 +3,9 @@ import FilesList from '../components/Filelist';
 import FoldersList from '../components/FolderList';
 import TopBar from '../components/StorageTopBar';
 import ContextMenu from '../components/ContextMenu';
-import { useGetFilesQuery, useSearchFilesQuery } from "../redux/storage.slice";
 import Breadcrumb from '../components/Breadcrumb';
 import { HiOutlineArrowSmLeft } from "react-icons/hi";
+import { useGetFilesQuery, useSearchFilesQuery } from "../redux/storage.slice";
 
 const StoragePage = () => {
   const [contextMenu, setContextMenu] = useState({visible: false, x: 0, y: 0, path: '', itemName: ''});

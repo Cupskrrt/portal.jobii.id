@@ -1,7 +1,10 @@
+import { useSelector } from "react-redux";
 import { useState, useEffect } from "react";
 import FolderCard from "./FolderCard";
 
 const FoldersList = ({ onContextMenu, data, currentDirectory, changeDirectory }) => {
+
+  const user = useSelector(state => state.persistedReducer.auth?.user?.email);  // Access email from the store
 
   const getItemName = (path) => {
     const parts = path.replace(currentDirectory, '').split("/");
@@ -14,12 +17,9 @@ const FoldersList = ({ onContextMenu, data, currentDirectory, changeDirectory })
     return parts.length === 2 && path.startsWith(currentDirectory) && !path.endsWith("/");
   });
 
-  console.log("folderPaths", folderPaths); // DEBUG
 
   // Get unique folder names from 'folderPaths'
   const itemNames = Array.from(new Set(folderPaths.map(getItemName)));
-
-  console.log("itemNames", itemNames); // DEBUG
 
   return (
     <div className="flex flex-wrap">
@@ -35,6 +35,16 @@ const FoldersList = ({ onContextMenu, data, currentDirectory, changeDirectory })
           />
         );
       })}
+
+      {user === 'luthfi@jobii.id' && (
+        <FolderCard
+          key="supplier"
+          itemName="Supplier"
+          onContextMenu={onContextMenu}
+          path={`${currentDirectory}Supplier/`}
+          changeDirectory={changeDirectory}
+        />
+      )}
     </div>
   );
 };
