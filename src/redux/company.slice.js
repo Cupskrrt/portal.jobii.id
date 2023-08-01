@@ -58,6 +58,11 @@ export const companyApi = createApi({
         url: `getForm/${id}`,
       }),
     }),
+    deleteApplicant: builder.mutation({
+      query: (id) => ({
+        url: `deletePendaftar/${id}`,
+      }),
+    }),
   }),
 });
 
@@ -69,4 +74,5 @@ export const {
   useLazyGetSelectedApplicantQuery,
   useCreateCompanyMutation,
   useCreateLowonganMutation,
+  useDeleteApplicantMutation,
 } = companyApi;

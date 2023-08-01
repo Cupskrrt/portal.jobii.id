@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const projectApi = createApi({
   reducerPath: "projectApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:3000/api",
+    baseUrl: "https://jobii.id:6969/api",
     prepareHeaders: (headers, { getState }) => {
       const token = getState().persistedReducer.user.token;
       headers.set("Authorization", `Bearer ${token}`);
