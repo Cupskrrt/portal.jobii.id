@@ -1,31 +1,47 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { HiOutlineDownload, HiOutlineUpload, HiPlusSm, HiChevronDown, HiSearch, HiFolder, HiDocument } from 'react-icons/hi';
+import { useUploadFilesMutation, } from "../redux/storage.slice"; 
 
-const TopBar = () => {
-  const [search, setSearch] = useState('');
+const TopBar = ({onSearch}) => {
+  const [search, setsearch] = useState('');
   const [newDropdownOpen, setNewDropdownOpen] = useState(false);
   const [uploadDropdownOpen, setUploadDropdownOpen] = useState(false);
+  const [uploadFiles, {isLoading} ] = useUploadFilesMutation();
 
-  const handleSearchChange = (event) => {
-    setSearch(event.target.value);
-    // This is where you will perform your search. 
-    // For now, we're just logging the input value.
-    console.log(event.target.value);
+  const handleSearchChange = (e) => {
+    setsearch(e.target.value);
+  };
+
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      onSearch(search);
+    }
+  };
+
+  const handleFileUpload = (event) => {
+    const files = Array.from(event.target.files);
+    console.log(files); // Log the files array
+    uploadFiles(files)
+      .then((response) => console.log(response)) // Log the server response
+      .catch((error) => console.error(error)); // Log any error that occurs
+  };
+
+  const handleFileUploadClick = (event) => {
+    event.stopPropagation();
+    document.getElementById("fileUploadInput").click();
   };
 
   const handleNewDropdownClick = (event) => {
-    event.stopPropagation(); // Prevent the event from propagating to the window
+    event.stopPropagation(); 
     setNewDropdownOpen(!newDropdownOpen);
-    // If the upload dropdown is open, close it
     if (uploadDropdownOpen) {
       setUploadDropdownOpen(false);
     }
   };
 
   const handleUploadDropdownClick = (event) => {
-    event.stopPropagation(); // Prevent the event from propagating to the window
+    event.stopPropagation(); 
     setUploadDropdownOpen(!uploadDropdownOpen);
-    // If the new dropdown is open, close it
     if (newDropdownOpen) {
       setNewDropdownOpen(false);
     }
@@ -38,12 +54,14 @@ const TopBar = () => {
     };
     window.addEventListener('click', hideDropdowns);
     window.addEventListener('contextmenu', hideDropdowns);
+    window.addEventListener('scroll', hideDropdowns);
 
     return () => {
       window.removeEventListener('click', hideDropdowns);
       window.removeEventListener('contextmenu', hideDropdowns);
+      window.removeEventListener('scroll', hideDropdowns);
     };
-  }, []); // Pass an empty dependency array to only run this effect on mount and unmount
+  }, []);
 
   return (
     <div className="flex gap-4 p-4 items-center bg-white shadow-md sticky top-0 z-50">
@@ -67,7 +85,20 @@ const TopBar = () => {
           <div className="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-white">
             <div className="py-1 rounded-md bg-white shadow-xs">
               <a href="#" className="flex items-center block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><HiFolder className="mr-2" /> Upload Folder</a>
-              <a href="#" className="flex items-center block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><HiDocument className="mr-2" /> Upload File</a>
+              <a 
+                href="#" 
+                className="flex items-center block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                onClick={handleFileUploadClick}  // Add the onClick handler here
+              >
+                <HiDocument className="mr-2" /> Upload File
+              </a>
+              <input 
+                type="file" 
+                id="fileUploadInput" 
+                style={{ display: "none" }} 
+                multiple 
+                onChange={handleFileUpload} 
+              />
             </div>
           </div>
         }
@@ -83,6 +114,7 @@ const TopBar = () => {
           className='flex-auto px-1' 
           value={search}
           onChange={handleSearchChange}
+          onKeyDown={handleKeyDown}
         />
       </div>
     </div>

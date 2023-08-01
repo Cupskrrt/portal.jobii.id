@@ -24,6 +24,7 @@ const LoginPage = () => {
         // alert(rejected?.data?.msg ? rejected?.data?.msg : rejected?.data?.error)
         alert(JSON.stringify(rejected))
       );
+    navigate("/dashboard");
   };
 
   return (
