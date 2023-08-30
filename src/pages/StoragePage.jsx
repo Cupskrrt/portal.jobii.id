@@ -19,7 +19,7 @@ const StoragePage = () => {
     setContextMenu({
       visible: true, 
       x: event.clientX, 
-      y: event.clientY,
+      y: event.clientY, 
       path: path,
       itemName: itemName,
     });
@@ -63,13 +63,13 @@ const StoragePage = () => {
 
   // Calculate the number of folders and files
   const numberOfFolders = data.content.filter((path) => {
-    const parts = path.replace(currentDirectory, '').split("/");
-    return parts.length === 2 && path.startsWith(currentDirectory) && !path.endsWith("/");
+    const parts = path.split("/");
+    return parts.length === currentDirectory.split("/").length + 1 && !path.endsWith("/");
   }).length;
 
   const numberOfFiles = data.content.filter((path) => {
     const parts = path.split("/");
-    return (!path.endsWith("/") && path.startsWith(currentDirectory) && path.replace(currentDirectory, '').split("/").length === 1);
+    return (!path.endsWith("/") && parts.length === currentDirectory.split("/").length);
   }).length;
 
   return (

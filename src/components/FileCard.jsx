@@ -21,7 +21,7 @@ const FileCard = ({ thumbnail, itemName, path, onContextMenu }) => {
       <div className="w-full h-[175px] flex justify-center items-center overflow-hidden rounded-t-lg">
         <img
           className="w-max h-max object-cover"
-          src={`${thumbnail}`}
+          src={`npo}`}
           alt="Preview"
         />
       </div>

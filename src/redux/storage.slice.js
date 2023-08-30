@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const storageApi = createApi({
-  reducerPath: "storageApi",
+  reducerPath: "storageApi", 
   baseQuery: fetchBaseQuery({
     baseUrl: "http://localhost:5000",
     prepareHeaders: (headers, { getState }) => {
@@ -14,6 +14,7 @@ export const storageApi = createApi({
       query: () => ({
         url: "/getDirectory",
       }),
+      providesTags: ['Files'],
     }),
     uploadFiles: builder.mutation({
       query: (files) => {
@@ -27,6 +28,7 @@ export const storageApi = createApi({
           body: formData,
         };
       },
+      invalidatesTags: ['Files'],
     }),
     searchFiles: builder.query({
       query: (keywords) => ({
@@ -38,12 +40,23 @@ export const storageApi = createApi({
         url:`/delete/${itemName}`,
         method: 'DELETE',
       }),
+      invalidatesTags: ['Files'],
     }),
     renameItem: builder.mutation({
       query: ({ itemName, newName }) => ({
         url: `/rename/${itemName}/${newName}`,
         method: 'POST',
       }),
+      invalidatesTags: ['Files'],
+    }),
+    moveItem: builder.mutation({
+      query: ({ sourceFilename, targetDirectory}) => {
+        return {
+          url: `/move/${sourceFilename}/$(targetDirectory)`,
+          method: 'POST',
+        };
+      },
+      invalidatesTags: ['Files'],
     }),
   }),
 });
@@ -54,4 +67,5 @@ export const {
   useSearchFilesQuery,
   useDeleteItemMutation,
   useRenameItemMutation,
+  useMoveItemMutation,
 } = storageApi;

@@ -11,7 +11,7 @@ const Breadcrumb = ({ currentDirectory, changeDirectory }) => {
 
   const handleLinkClick = (index) => {
     if (index === -1) {
-      // If the index is -1, it means the "Root" breadcrumb was clicked
+      // If the index is -1, it means the "Jobii" breadcrumb was clicked
       changeDirectory("/");
     } else {
       const newPath = "/" + parts.slice(0, index + 1).join("/");
@@ -27,7 +27,7 @@ const Breadcrumb = ({ currentDirectory, changeDirectory }) => {
         onMouseOver={(e) => e.target.style.color = 'blue'}
         onMouseOut={(e) => e.target.style.color = 'black'}
       >
-        Root
+        Jobii
       </a>
       {" > "}
       {parts.map((part, index) => (

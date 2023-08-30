@@ -17,7 +17,6 @@ const FoldersList = ({ onContextMenu, data, currentDirectory, changeDirectory })
     return parts.length === 2 && path.startsWith(currentDirectory) && !path.endsWith("/");
   });
 
-
   // Get unique folder names from 'folderPaths'
   const itemNames = Array.from(new Set(folderPaths.map(getItemName)));
 

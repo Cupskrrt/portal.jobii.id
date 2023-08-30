@@ -1,15 +1,13 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { HiOutlineDownload, HiOutlineUpload, HiPlusSm, HiChevronDown, HiSearch, HiFolder, HiDocument } from 'react-icons/hi';
-import { useUploadFilesMutation, } from "../redux/storage.slice"; 
 
-const TopBar = ({onSearch}) => {
-  const [search, setsearch] = useState('');
+const TopBar = ({ onSearch }) => {
+  const [search, setSearch] = useState('');
   const [newDropdownOpen, setNewDropdownOpen] = useState(false);
   const [uploadDropdownOpen, setUploadDropdownOpen] = useState(false);
-  const [uploadFiles, {isLoading} ] = useUploadFilesMutation();
 
   const handleSearchChange = (e) => {
-    setsearch(e.target.value);
+    setSearch(e.target.value);
   };
 
   const handleKeyDown = (event) => {
@@ -18,17 +16,9 @@ const TopBar = ({onSearch}) => {
     }
   };
 
-  const handleFileUpload = (event) => {
-    const files = Array.from(event.target.files);
-    console.log(files); // Log the files array
-    uploadFiles(files)
-      .then((response) => console.log(response)) // Log the server response
-      .catch((error) => console.error(error)); // Log any error that occurs
-  };
-
   const handleFileUploadClick = (event) => {
     event.stopPropagation();
-    document.getElementById("fileUploadInput").click();
+    // document.getElementById("fileUploadInput").click();
   };
 
   const handleNewDropdownClick = (event) => {
@@ -65,6 +55,7 @@ const TopBar = ({onSearch}) => {
 
   return (
     <div className="flex gap-4 p-4 items-center bg-white shadow-md sticky top-0 z-50">
+      {/* New Dropdown */}
       <div className="relative">
         <button onClick={handleNewDropdownClick} className="px-5 py-2 bg-blue-500 text-white flex justify-center items-center rounded-md font-[14]">
           <HiPlusSm className="mr-2 w-5 h-auto"/> New <HiChevronDown className="ml-2 w-5 h-auto"/>
@@ -77,6 +68,7 @@ const TopBar = ({onSearch}) => {
           </div>
         }
       </div>
+      
       <div className="relative">
         <button onClick={handleUploadDropdownClick} className="pl-4 pr-3 py-2 text-black rounded-md flex items-center font-[14]">
           <HiOutlineUpload className="mr-2" /> Upload <HiChevronDown className="ml-2 w-5 h-auto"/>
@@ -88,7 +80,7 @@ const TopBar = ({onSearch}) => {
               <a 
                 href="#" 
                 className="flex items-center block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                onClick={handleFileUploadClick}  // Add the onClick handler here
+                onClick={handleFileUploadClick}
               >
                 <HiDocument className="mr-2" /> Upload File
               </a>
@@ -96,16 +88,18 @@ const TopBar = ({onSearch}) => {
                 type="file" 
                 id="fileUploadInput" 
                 style={{ display: "none" }} 
-                multiple 
-                onChange={handleFileUpload} 
               />
             </div>
           </div>
         }
       </div>
+      
+      {/* Download Button */}
       <button className="pl-4 pr-4 py-2 text-black rounded-md flex items-center font-[14]">
         <HiOutlineDownload className="mr-2" /> Download
       </button>
+      
+      {/* Search Bar */}
       <div className="w-96 px-4 py-2 border rounded-md flex items-center">
         <HiSearch className="mr-2 "/>
         <input 
